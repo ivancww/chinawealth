@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>资产传承规划系统 Pro V3.1.0</title>
+    <title>资产传承规划系统 Pro V3.1.1</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2980b9">
     <link rel="apple-touch-icon" href="logo_192.png">
@@ -16,7 +16,6 @@
             --bg-color: #f4f6f9; --card-bg-color: #ffffff; --text-color: #2c3e50; --label-color: #7f8c8d;
             --primary-color: #2980b9; --secondary-color: #34495e; --border-color: #ecf0f1;
             --highlight-color: #e74c3c; --gain-color: #27ae60; --gold-color: #f39c12;
-            /* 新增颜色变量 */
             --draw-blue: #2980b9; 
             --value-purple: #8e44ad;
         }
@@ -59,8 +58,8 @@
 
 <div id="qr-modal">
     <div style="background:#fff; padding:2rem; border-radius:12px; text-align:center; max-width: 85%;">
-        <p style="margin-bottom:10px; font-weight:bold;">长按下方二维码识别或扫码</p>
-        <div id="qrcode" style="display: flex; justify-content: center; padding: 10px;"></div>
+        <p style="margin-bottom:10px; font-weight:bold; color:#333;">长按下方二维码识别或扫码</p>
+        <div id="qrcode" style="display: flex; justify-content: center; padding: 10px; background: white;"></div>
         <button class="btn" style="background:#e74c3c; margin-top:1.5rem; width:100%;" onclick="closeQR()">关闭</button>
     </div>
 </div>
@@ -69,19 +68,20 @@
     <div class="card-container">
         <header id="admin-header">
             <h1>资产传承规划系统 Pro</h1>
-            <span class="version-tag">Version 3.1.0</span>
+            <span class="version-tag">Version 3.1.1</span>
         </header>
         <div class="action-bar" id="admin-actions">
             <input type="text" id="client-name" style="flex:1; padding:8px; border-radius:6px; border:1px solid #ddd;" placeholder="客户姓名">
-            <button class="btn" style="background:#27ae60;" onclick="saveToLocal()">保存方案</button>
-            <div class="input-group" style="margin:0; min-width:150px;">
+            <button class="btn" style="background:#27ae60;" onclick="saveToLocal()">保存</button>
+            <div class="input-group" style="margin:0; min-width:140px;">
                 <select id="local-plans" onchange="loadLocalPlan()" style="padding:5px; font-size:0.8rem;">
                     <option value="">-- 方案管理 --</option>
                 </select>
             </div>
+            <button class="btn" style="background:#8e44ad;" onclick="exportData()">汇出</button>
             <button class="btn" style="background:#f39c12;" onclick="document.getElementById('import-file').click()">汇入</button>
             <input type="file" id="import-file" class="hidden" onchange="importData(event)">
-            <button class="btn" style="background:#2980b9;" onclick="generateShareLink()">分享方案</button>
+            <button class="btn" style="background:#2980b9;" onclick="generateShareLink()">分享</button>
         </div>
 
         <div class="currency-box">
@@ -174,44 +174,17 @@
     </div>
 </div>
 
-<div id="tab-currency" class="tab-section">
-    <div class="card-container" style="text-align: center;">
-        <h2>🌍 多元货币转换</h2>
-        <img src="https://i.postimg.cc/DyWG959B/9種貨幣.png" class="hero-img">
-        <div class="feature-desc">
-            <p><strong>灵活应对全球变局：</strong>从保单<span class="highlight-text">第 2 年起</span>，您即可申请自由转换保单货币，且<span class="highlight-text">每年可申请转换一次</span>。助您有效对冲汇率风险。</p>
-        </div>
-    </div>
-</div>
-
-<div id="tab-split-info" class="tab-section">
-    <div class="card-container" style="text-align: center;">
-        <h2>✂️ 保单分拆选项</h2>
-        <img src="https://i.postimg.cc/m2c9vVvy/保單分拆.png" class="hero-img">
-        <div class="feature-desc">
-            <p><strong>一笔资金，多重用途：</strong>分拆后的保单可以独立设定受益人、货币或策略。实现养老与传承双重规划。</p>
-        </div>
-    </div>
-</div>
-
+<div id="tab-currency" class="tab-section"><div class="card-container"><h2>🌍 多元货币转换</h2><img src="https://i.postimg.cc/DyWG959B/9種貨幣.png" class="hero-img"></div></div>
+<div id="tab-split-info" class="tab-section"><div class="card-container"><h2>✂️ 保单分拆选项</h2><img src="https://i.postimg.cc/m2c9vVvy/保單分拆.png" class="hero-img"></div></div>
 <div id="tab-hk" class="tab-section">
-    <div class="card-container" style="text-align: center;">
+    <div class="card-container">
         <h2>🛡️ 资产隔离防火墙</h2>
         <h3>⚖️ 防婚姻风险</h3><img src="https://i.postimg.cc/TYybzQzt/防婚姻風險.png" class="hero-img">
-        <div class="feature-desc"><p>通过指定血亲，<span class="highlight-text">有效隔离后代婚后财产</span>。</p></div>
         <h3>🏰 防纠纷风险</h3><img src="https://i.postimg.cc/jdWfpvpc/防糾紛風險.png" class="hero-img">
-        <div class="feature-desc"><p>受益人定向给付，<span class="highlight-text">无需遗产认证</span>，杜绝争产风险。</p></div>
         <h3>🌐 跨境隐私保护</h3><img src="https://i.postimg.cc/XvgBfPCz/跨境資產.png" class="hero-img">
     </div>
 </div>
-
-<div id="tab-flex" class="tab-section">
-    <div class="card-container" style="text-align: center;">
-        <h2>💼 灵活理赔支付</h2>
-        <img src="https://i.postimg.cc/HkXyxnsD/身故賠償.png" class="hero-img">
-        <div class="feature-desc"><p><strong>类信托管理：</strong>定制化支付方案，未领余款继续享受<span class="highlight-text">复息增值</span>。</p></div>
-    </div>
-</div>
+<div id="tab-flex" class="tab-section"><div class="card-container"><h2>💼 灵活理赔支付</h2><img src="https://i.postimg.cc/HkXyxnsD/身故賠償.png" class="hero-img"></div></div>
 
 <nav class="bottom-nav" id="main-nav">
     <div class="nav-item active" onclick="switchTab('tab-calculator', this)"><i class="fa-solid fa-calculator nav-icon"></i><span class="nav-text">测算</span></div>
@@ -346,19 +319,22 @@
         toggleSplit();
     }
 
-    function switchTab(id, el) {
-        document.querySelectorAll('.tab-section').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.getElementById(id).classList.add('active'); el.classList.add('active');
-        window.scrollTo(0,0);
-    }
-    
-    function setCurr(c) {
-        curr = c; document.getElementById('btn-cny').style.background = c === 'CNY' ? 'var(--primary-color)' : 'transparent';
-        document.getElementById('btn-cny').style.color = c === 'CNY' ? '#fff' : '#333';
-        document.getElementById('btn-usd').style.background = c === 'USD' ? 'var(--primary-color)' : 'transparent';
-        document.getElementById('btn-usd').style.color = c === 'USD' ? '#fff' : '#333';
-        calculate();
+    function exportData() { 
+        const d = { 
+            budget: document.getElementById('rmb-budget').value, 
+            age: document.getElementById('current-age').value, 
+            client: document.getElementById('client-name').value,
+            split: document.getElementById('enable-split').checked,
+            ratio: document.getElementById('split-ratio').value,
+            strat_main: document.getElementById('strat-main').value,
+            strat_sub: document.getElementById('strat-sub').value,
+            strat_single: document.getElementById('strategy-single').value
+        };
+        const blob = new Blob([JSON.stringify(d)], {type:"application/json"});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `理财方案_${d.client || '客户'}.json`;
+        a.click();
     }
 
     function generateShareLink() {
@@ -367,12 +343,14 @@
         new QRCode(document.getElementById('qrcode'), { text: url, width: 200, height: 200 });
         setTimeout(() => {
             const canvas = document.querySelector('#qrcode canvas');
-            const img = document.createElement('img');
-            img.src = canvas.toDataURL("image/png");
-            img.style.width = "200px";
-            document.getElementById('qrcode').innerHTML = "";
-            document.getElementById('qrcode').appendChild(img);
-        }, 500);
+            if(canvas) {
+                const img = document.createElement('img');
+                img.src = canvas.toDataURL("image/png");
+                img.style.width = "200px";
+                document.getElementById('qrcode').innerHTML = "";
+                document.getElementById('qrcode').appendChild(img);
+            }
+        }, 600);
         document.getElementById('qr-modal').style.display = 'flex';
     }
 
@@ -388,6 +366,21 @@
             toggleSplit();
         }; 
         reader.readAsText(e.target.files[0]);
+    }
+
+    function switchTab(id, el) {
+        document.querySelectorAll('.tab-section').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById(id).classList.add('active'); el.classList.add('active');
+        window.scrollTo(0,0);
+    }
+    
+    function setCurr(c) {
+        curr = c; document.getElementById('btn-cny').style.background = c === 'CNY' ? 'var(--primary-color)' : 'transparent';
+        document.getElementById('btn-cny').style.color = c === 'CNY' ? '#fff' : '#333';
+        document.getElementById('btn-usd').style.background = c === 'USD' ? 'var(--primary-color)' : 'transparent';
+        document.getElementById('btn-usd').style.color = c === 'USD' ? '#fff' : '#333';
+        calculate();
     }
 
     window.onload = function() {
