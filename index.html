@@ -3,283 +3,334 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>资产传承规划系统</title>
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2980b9">
-    <link rel="apple-touch-icon" href="logo_192.png">
-    
+    <title>资产传承规划系统 Pro</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <style>
         :root {
-            --bg-color: #f4f6f9; --card-bg-color: #ffffff; --text-color: #2c3e50; --label-color: #7f8c8d;
+            --bg-color: #f4f6f9;
+            --card-bg-color: #ffffff; --text-color: #2c3e50; --label-color: #7f8c8d;
             --primary-color: #2980b9; --secondary-color: #34495e; --border-color: #ecf0f1;
             --highlight-color: #e74c3c; --gain-color: #27ae60; --gold-color: #f39c12;
         }
         body { font-family: 'Noto Sans SC', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding-bottom: 80px; }
-        .tab-section { display: none; padding: 1.5rem; max-width: 1200px; margin: 0 auto; animation: fadeIn 0.4s; }
+        .tab-section { display: none; padding: 1rem; max-width: 1200px; margin: 0 auto; animation: fadeIn 0.4s; }
         .tab-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
+        .card-container { background: var(--card-bg-color); border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); padding: 1.5rem; margin-bottom: 2rem; }
+        header { text-align: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem; }
+        header h1 { color: var(--primary-color); font-size: 1.6rem; margin: 0; }
+        h2 { color: var(--secondary-color); font-size: 1.2rem; border-left: 4px solid var(--primary-color); padding-left: 10px; margin: 1rem 0; }
+        .grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        .input-group { display: flex; flex-direction: column; margin-bottom: 1rem; }
+        .input-group label { font-weight: 500; color: var(--secondary-color); margin-bottom: 0.4rem; font-size: 0.9rem; }
+        .input-group input, .input-group select { padding: 10px; border: 1px solid #bdc3c7; border-radius: 8px; font-size: 1rem; outline: none; }
+        .action-bar { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem; background: #e8f4f8; padding: 1rem; border-radius: 8px; align-items: center; }
+        .btn { padding: 8px 15px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: #fff; font-size: 0.85rem; }
+        .currency-box { background: #f8f9fa; border-radius: 12px; padding: 1rem; border: 1px solid #eee; }
+        .split-control { background: #fffcf0; border: 2px dashed #f39c12; padding: 1rem; border-radius: 12px; margin: 1rem 0; }
+        .hidden { display: none !important; }
+        .table-wrapper { height: 600px; overflow-y: auto; border-radius: 8px; border: 1px solid var(--border-color); margin-top: 10px; }
+        table { width: 100%; border-collapse: collapse; text-align: center; font-size: 0.8rem; min-width: 1000px; }
+        th { background-color: #f8f9fa; padding: 12px; border: 1px solid #eee; position: sticky; top: 0; z-index: 10; }
+        td { padding: 10px; border: 1px solid #eee; }
         
-        .card-container { background: var(--card-bg-color); border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); padding: 2rem; margin-bottom: 2rem; }
-        header { text-align: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem; margin-bottom: 1.5rem; }
-        header h1 { color: var(--primary-color); font-weight: 700; font-size: 1.8rem; margin-bottom: 0.5rem; }
-        h2 { color: var(--secondary-color); font-size: 1.3rem; border-left: 4px solid var(--primary-color); padding-left: 10px; margin-top: 0; }
+        /* 導航 */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); padding-bottom: env(safe-area-inset-bottom); z-index: 1000; }
+        .nav-item { flex: 1; text-align: center; padding: 12px 0; color: #999; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center;}
+        .nav-text { color: #e74c3c !important; font-weight: 500; margin-top: 2px; }
+        .nav-item.active .nav-text { color: var(--primary-color) !important; font-weight: bold; }
+        .nav-icon { display: block; font-size: 1.2rem; }
         
-        .grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
-        .input-group { display: flex; flex-direction: column; }
-        .input-group label { font-weight: 500; color: var(--secondary-color); margin-bottom: 0.5rem; font-size: 0.95rem; }
-        .input-group input, .input-group select { padding: 0.8rem; border: 1px solid #bdc3c7; border-radius: 8px; font-size: 1rem; outline: none; }
+        /* QR Modal */
+        #qr-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; }
+        #qrcode img { border: 12px solid white; border-radius: 8px; max-width: 220px; }
         
-        .action-bar { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 1.5rem; background: #e8f4f8; padding: 1rem; border-radius: 8px; align-items: center; justify-content: space-between;}
-        .client-name-input { padding: 0.6rem; border: 1px solid var(--primary-color); border-radius: 6px; font-size: 1rem; flex-grow: 1; max-width: 250px; }
-        .btn { padding: 0.6rem 1rem; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; color: #fff; transition: 0.2s; font-size: 0.9rem; }
-        .btn-save { background-color: #27ae60; }
-        .btn-import { background-color: #f39c12; }
-        .btn-share { background-color: #2980b9; }
-
-        .currency-box { background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); border-radius: 12px; padding: 1.5rem; border: 1px solid #dcdde1; }
-        .split-control { background: #fffcf0; border: 2px dashed #f39c12; padding: 1.5rem; border-radius: 12px; margin: 1.5rem 0; }
-        .hidden { display: none; }
-        
-        .table-wrapper { height: 600px; overflow-y: auto; border-radius: 8px; border: 1px solid var(--border-color); }
-        table { width: 100%; border-collapse: collapse; text-align: center; font-size: 0.85rem; }
-        th { background-color: #f8f9fa; position: sticky; top: 0; z-index: 10; padding: 10px; border-bottom: 2px solid var(--primary-color); }
-        td { padding: 10px; border-bottom: 1px solid var(--border-color); }
-        
-        .hero-img { width: 100%; height: auto; border-radius: 12px; margin-bottom: 1.5rem; box-shadow: 0 4px 10px rgba(0,0,0,0.08); display: block; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #ffffff; box-shadow: 0 -2px 10px rgba(0,0,0,0.08); display: flex; justify-content: space-around; padding: 10px 0; z-index: 1000; padding-bottom: calc(10px + env(safe-area-inset-bottom)); }
-        .nav-item { text-align: center; color: var(--label-color); font-size: 0.7rem; cursor: pointer; flex: 1; display: flex; flex-direction: column; align-items: center;}
-        .nav-item.active { color: var(--primary-color); font-weight: bold; }
-        .nav-icon { font-size: 1.3rem; margin-bottom: 4px; }
-        #qr-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; }
-        .qr-content { background: #fff; padding: 2rem; border-radius: 12px; text-align: center; }
+        /* 客戶歡迎語 */
+        .client-welcome { display: none; background: #fff4e5; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid #f39c12; color: #d35400; font-size: 1.1rem; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div id="qr-modal">
-    <div class="qr-content">
-        <h3>分享专属方案</h3>
-        <div id="qrcode" style="margin:1.5rem auto; display:flex; justify-content:center;"></div>
-        <button class="btn" style="background:#e74c3c;" onclick="closeQR()">关闭</button>
+    <div style="background:#fff; padding:2rem; border-radius:12px; text-align:center; position: relative; width: 80%; max-width: 320px;">
+        <div id="qrcode" style="display: flex; justify-content: center; margin-bottom: 10px;"></div>
+        <p style="color: #666; font-size: 0.85rem;">温馨提示：长按图片可识别或保存</p>
+        <button class="btn" style="background:#e74c3c; width: 100%; margin-top: 10px;" onclick="closeQR()">关闭</button>
     </div>
 </div>
 
 <div id="tab-calculator" class="tab-section active">
     <div class="card-container">
-        <header>
-            <h1>资产传承规划系统</h1>
-            <p>锁定长期利率 · 财富无限传承</p>
-        </header>
+        <header><h1>资产传承规划系统 Pro</h1></header>
+        
+        <div id="client-msg" class="client-welcome">
+            亲爱的 <span id="display-client-name"></span>，这是你专属的理财方案
+        </div>
 
-        <div class="action-bar" id="action-bar">
-            <div style="display: flex; gap: 10px; align-items: center; flex:1;">
-                <label style="font-weight:bold;">客户：</label>
-                <input type="text" id="client-name" class="client-name-input" placeholder="客户姓名">
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <button class="btn btn-save" onclick="exportData()">⬇️ 保存</button>
-                <button class="btn btn-import" onclick="document.getElementById('import-file').click()">⬆️ 汇入</button>
-                <input type="file" id="import-file" style="display:none" onchange="importData(event)">
-                <button class="btn btn-share" onclick="generateShareLink()">📲 分享</button>
-            </div>
+        <div class="action-bar" id="admin-tools">
+            <input type="text" id="client-name" style="flex:1; padding:8px; border-radius:6px; border:1px solid #ddd;" placeholder="客户姓名">
+            <button class="btn" style="background:#27ae60;" onclick="exportData()">保存</button>
+            <button class="btn" style="background:#f39c12;" onclick="document.getElementById('import-file').click()">汇入</button>
+            <input type="file" id="import-file" class="hidden" onchange="importData(event)">
+            <button class="btn" style="background:#2980b9;" onclick="generateShareLink()">分享方案</button>
         </div>
 
         <div class="currency-box">
-            <h2>🌍 第一步：设定配置预算 (5年期缴)</h2>
+            <h2>🌍 第一步：设定配置预算 (5年缴)</h2>
             <div class="grid-layout">
-                <div class="input-group">
-                    <label>年缴预算 (人民币 ¥)</label>
-                    <input type="text" id="rmb-budget" value="100,000" inputmode="numeric">
-                </div>
-                <div class="input-group">
-                    <label>5年累计总预算 (人民币 ¥)</label>
-                    <input type="text" id="total-rmb" readonly style="background:#f8f9fa; color:var(--highlight-color); font-weight:bold;">
-                </div>
-                <div class="input-group">
-                    <label>被保险人目前年龄</label>
-                    <input type="number" id="current-age" value="30">
-                </div>
+                <div class="input-group"><label>年缴预算 (RMB ¥)</label><input type="text" id="rmb-budget" value="100,000"></div>
+                <div class="input-group"><label>5年累计总保费 (RMB ¥)</label><input type="text" id="total-premium-display" readonly style="background:#eee; font-weight:bold; color:var(--highlight-color);"></div>
+                <div class="input-group"><label>目前年龄</label><input type="number" id="current-age" value="30" min="0"></div>
             </div>
         </div>
 
         <div class="split-control">
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 1rem;">
+            <div style="display:flex; align-items:center; gap:10px;">
                 <input type="checkbox" id="enable-split" style="width:20px; height:20px;">
-                <h2 style="margin:0; border:none; padding:0; color:#d35400;">第二步：行使“保单分拆选项”</h2>
+                <h2 style="margin:0; border:none; color:#d35400;">第二步：行使保单分拆选项</h2>
             </div>
-            <div id="single-config" class="grid-layout">
+            
+            <div id="single-config" class="grid-layout" style="margin-top:10px;">
+                <div class="input-group">
+                    <label>专款用途</label>
+                    <select id="usage-single"><option>养老金 / 资产传承</option><option>子女生活保障</option></select>
+                </div>
                 <div class="input-group">
                     <label>提取策略</label>
-                    <select id="strategy-single">
+                    <select id="strategy-single" onchange="calculate()">
                         <option value="none">【资产滚存】不提取</option>
                         <option value="withdraw8_from8">第 8 年起提取 8%</option>
                         <option value="withdraw13_from15">第 15 年起提取 13%</option>
+                        <option value="withdraw18_from20">第 20 年起提取 18%</option>
                     </select>
                 </div>
             </div>
-            <div id="split-config" class="hidden">
+
+            <div id="split-config" class="hidden" style="margin-top:15px; border-top:1px solid #fde3a7; padding-top:10px;">
                 <div class="grid-layout">
                     <div class="input-group">
-                        <label>分拆比例 (主50% : 副50%)</label>
-                        <select id="split-ratio"><option value="0.5">50% : 50%</option></select>
+                        <label>分拆比例 (主 : 副)</label>
+                        <select id="split-ratio" onchange="calculate()">
+                            <option value="0.5">50% : 50%</option>
+                            <option value="0.4">40% : 60%</option>
+                            <option value="0.3">30% : 70%</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="grid-layout" style="margin-top:10px;">
+                    <div class="input-group">
+                        <label>主保单用途</label>
+                        <select id="usage-m"><option>养老金 / 资产传承</option><option>子女生活保障</option></select>
+                        <label style="margin-top:5px;">主策略</label>
+                        <select id="strat-main" onchange="calculate()">
+                            <option value="none">资产滚存</option>
+                            <option value="withdraw8_from8">8年领8%</option>
+                            <option value="withdraw13_from15" selected>15年领13%</option>
+                            <option value="withdraw18_from20">20年领18%</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label>副保单用途</label>
+                        <select id="usage-s"><option>子女生活保障</option><option>养老金 / 资产传承</option></select>
+                        <label style="margin-top:5px;">副策略</label>
+                        <select id="strat-sub" onchange="calculate()">
+                            <option value="none">资产滚存</option>
+                            <option value="withdraw8_from8" selected>8年领8%</option>
+                            <option value="withdraw13_from15">15年领13%</option>
+                            <option value="withdraw18_from20">20年领18%</option>
+                        </select>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div style="margin-top: 2rem;">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h2>📈 利益演示</h2>
-                <div style="display: flex; gap: 5px; background: #ddd; border-radius: 20px; padding: 2px;">
-                    <button id="btn-cny" class="btn" style="background:var(--primary-color); border-radius:20px; min-width:40px;" onclick="setCurrencyMode('CNY')">¥</button>
-                    <button id="btn-usd" class="btn" style="background:transparent; color:#333; border-radius:20px; min-width:40px;" onclick="setCurrencyMode('USD')">$</button>
+        <div style="margin-top:1.5rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h2>📈 利益演示 (至100岁)</h2>
+                <div style="text-align:right;">
+                    <p style="font-size:0.75rem; color:#888; margin:0;">实时汇率参考：1 RMB = 0.138 USD</p>
+                    <div style="background:#eee; border-radius:20px; padding:2px; display:inline-flex; margin-top:4px;">
+                        <button id="btn-cny" class="btn" style="background:var(--primary-color); border-radius:20px; min-width:40px;" onclick="setCurr('CNY')">¥</button>
+                        <button id="btn-usd" class="btn" style="background:transparent; color:#333; border-radius:20px; min-width:40px;" onclick="setCurr('USD')">$</button>
+                    </div>
                 </div>
             </div>
             <div class="table-wrapper">
-                <table>
-                    <thead><tr id="header-row-1"></tr><tr id="header-row-2"></tr></thead>
-                    <tbody id="results-table-body"></tbody>
+                <table id="main-table">
+                    <thead><tr id="h1"></tr><tr id="h2"></tr></thead>
+                    <tbody id="res-body"></tbody>
                 </table>
             </div>
         </div>
     </div>
 </div>
 
-<div id="tab-currency" class="tab-section">
-    <div class="card-container" style="text-align: center;">
-        <h2>🌍 9大货币，随需随意转换</h2>
-        <img src="https://i.postimg.cc/DyWG959B/9種貨幣.png" class="hero-img">
-        <p>保单<span class="highlight-text">第 2 年起</span>即可转换，每年可调一次，完美对冲全球汇率风险。</p>
-    </div>
-</div>
+<div id="tab-currency" class="tab-section">...</div>
+<div id="tab-split-info" class="tab-section">...</div>
+<div id="tab-hk" class="tab-section">...</div>
+<div id="tab-flex" class="tab-section">...</div>
 
-<div id="tab-split-info" class="tab-section">
-    <div class="card-container" style="text-align: center;">
-        <h2>✂️ 市场首创「保单分拆」</h2>
-        <img src="https://i.postimg.cc/m2c9vVvy/保單分拆.png" class="hero-img">
-        <p>资产一分为二，满足多子女分配及不同人生阶段的规划需求。</p>
-    </div>
-</div>
-
-<div id="tab-hk" class="tab-section">
-    <div class="card-container" style="text-align: center;">
-        <h2>🛡️ 资产隔离防火墙</h2>
-        <h3>⚖️ 防婚姻风险 (专属个人金库)</h3>
-        <img src="https://i.postimg.cc/TYybzQzt/防婚姻風險.png" class="hero-img">
-        <h3>🏰 防纠纷风险 (避开繁琐继承)</h3>
-        <img src="https://i.postimg.cc/jdWfpvpc/防糾紛風險.png" class="hero-img">
-        <h3>🌐 跨地域隐私保护</h3>
-        <img src="https://i.postimg.cc/XvgBfPCz/跨境資產.png" class="hero-img">
-    </div>
-</div>
-
-<div id="tab-flex" class="tab-section">
-    <div class="card-container" style="text-align: center;">
-        <h2>💼 灵活理赔支付办法</h2>
-        <img src="https://i.postimg.cc/HkXyxnsD/身故賠償.png" class="hero-img">
-        <p>类信托功能，确保财富细水长流，余额复息滚存直至合约终止。</p>
-    </div>
-</div>
-
-<nav class="bottom-nav">
-    <div class="nav-item active" onclick="switchTab('tab-calculator', this)"><i class="fa-solid fa-calculator nav-icon"></i>测算</div>
-    <div class="nav-item" onclick="switchTab('tab-currency', this)"><i class="fa-solid fa-earth-asia nav-icon"></i>货币</div>
-    <div class="nav-item" onclick="switchTab('tab-split-info', this)"><i class="fa-solid fa-chart-pie nav-icon"></i>分拆</div>
-    <div class="nav-item" onclick="switchTab('tab-hk', this)"><i class="fa-solid fa-shield-halved nav-icon"></i>隔离</div>
-    <div class="nav-item" onclick="switchTab('tab-flex', this)"><i class="fa-solid fa-hand-holding-dollar nav-icon"></i>理赔</div>
+<nav class="bottom-nav" id="main-nav">
+    <div class="nav-item active" onclick="switchTab('tab-calculator', this)"><i class="fa-solid fa-calculator nav-icon"></i><span class="nav-text">测算</span></div>
+    <div class="nav-item" onclick="switchTab('tab-currency', this)"><i class="fa-solid fa-earth-asia nav-icon"></i><span class="nav-text">货币</span></div>
+    <div class="nav-item" onclick="switchTab('tab-split-info', this)"><i class="fa-solid fa-chart-pie nav-icon"></i><span class="nav-text">分拆</span></div>
+    <div class="nav-item" onclick="switchTab('tab-hk', this)"><i class="fa-solid fa-shield-halved nav-icon"></i><span class="nav-text">隔离</span></div>
+    <div class="nav-item" onclick="switchTab('tab-flex', this)"><i class="fa-solid fa-hand-holding-dollar nav-icon"></i><span class="nav-text">理赔</span></div>
 </nav>
 
 <script>
-    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); }); }
-
-    let currentCurrencyMode = 'CNY'; let currentRate = 0.138;
-    const multipliers = {
-        'none': { 8: 1.165, 15: 1.86, 20: 2.71, 30: 5.85, 40: 10.99, 60: 38.73 },
-        'withdraw8_from8': { 8: 1.109, 15: 1.06, 20: 1.09, 30: 1.23, 40: 1.22 },
-        'withdraw13_from15': { 15: 1.73, 20: 1.78, 30: 2.02, 40: 2.01 }
+    let curr = 'CNY'; const liveRate = 0.138;
+    const mults = {
+        'none': { 8: 1.165, 9: 1.244, 10: 1.32, 15: 1.86, 20: 2.71, 30: 5.85, 40: 10.99, 60: 38.73, 75: 99.596, 100: 480.821 },
+        'withdraw8_from8': { 8: 1.0848, 9: 1.082, 10: 1.065, 15: 1.06, 20: 1.09, 30: 1.23, 75: 1.285, 100: 1.502 },
+        'withdraw13_from15': { 15: 1.73, 20: 1.78, 30: 2.02, 40: 2.01, 75: 2.382, 100: 3.863 },
+        'withdraw18_from20': { 20: 2.52, 30: 2.93, 40: 3.01, 60: 3.78, 75: 4.50, 100: 8.50 }
     };
 
-    function getMult(strat, yr) {
-        let m = multipliers[strat]; let keys = Object.keys(m).map(Number).sort((a,b)=>a-b);
-        if (yr <= keys[0]) return m[keys[0]]; if (yr >= keys[keys.length-1]) return m[keys[keys.length-1]];
+    function getVal(strat, yr) {
+        const m = mults[strat] || mults['none'];
+        const keys = Object.keys(m).map(Number).sort((a,b)=>a-b);
+        if (yr <= keys[0]) return m[keys[0]];
+        if (yr >= keys[keys.length-1]) return m[keys[keys.length-1]];
         let l = keys[0], u = keys[keys.length-1];
         for(let i=0; i<keys.length-1; i++) { if(yr >= keys[i] && yr <= keys[i+1]) { l=keys[i]; u=keys[i+1]; break; } }
         return m[l] + (yr - l) / (u - l) * (m[u] - m[l]);
     }
 
     function calculate() {
-        const isSplit = document.getElementById('enable-split').checked;
         const budget = parseFloat(document.getElementById('rmb-budget').value.replace(/,/g, '')) || 0;
-        const total = budget * 5; const age = parseInt(document.getElementById('current-age').value) || 30;
-        const factor = currentCurrencyMode === 'USD' ? currentRate : 1;
-        const body = document.getElementById('results-table-body');
-        document.getElementById('total-rmb').value = total.toLocaleString();
+        const total = budget * 5; 
+        document.getElementById('total-premium-display').value = total.toLocaleString();
+        const startAge = parseInt(document.getElementById('current-age').value) || 0;
+        const isSplit = document.getElementById('enable-split').checked;
+        const ratio = parseFloat(document.getElementById('split-ratio').value);
+        const factor = curr === 'USD' ? liveRate : 1;
+        const body = document.getElementById('res-body');
         body.innerHTML = '';
 
         if (!isSplit) {
-            document.getElementById('header-row-1').innerHTML = `<th rowspan="2">年度(年龄)</th><th rowspan="2">累计保费</th><th colspan="3">预期收益</th>`;
-            document.getElementById('header-row-2').innerHTML = `<th>提取</th><th>现价</th><th>总利益</th>`;
+            document.getElementById('h1').innerHTML = `<th rowspan="2">保单年度(年龄)</th><th rowspan="2">累计保费</th><th colspan="4">预期收益 (单一保单)</th>`;
+            document.getElementById('h2').innerHTML = `<th>年提取</th><th>累计提取</th><th>账户现值</th><th>合计利益</th>`;
             const strat = document.getElementById('strategy-single').value;
-            for(let yr of [8, 15, 20, 30, 40, 60]) {
-                const cv = total * getMult(strat, yr); const draw = yr >= 15 ? total * 0.13 * (yr-14) : 0;
-                body.innerHTML += `<tr><td>第${yr}年(${age+yr}岁)</td><td>${Math.round(total*factor).toLocaleString()}</td><td>-</td><td>${Math.round(cv*factor).toLocaleString()}</td><td style="color:var(--gain-color); font-weight:bold;">${Math.round(cv*factor).toLocaleString()}</td></tr>`;
+            for(let yr = 8; yr <= (100 - startAge); yr++) {
+                if (yr > 10 && yr % 5 !== 0 && yr !== (100-startAge)) continue;
+                const cv = total * getVal(strat, yr);
+                let d = 0, sY = 999;
+                if(strat === 'withdraw8_from8') { d = total * 0.08; sY = 8; }
+                else if(strat === 'withdraw13_from15') { d = total * 0.13; sY = 15; }
+                else if(strat === 'withdraw18_from20') { d = total * 0.18; sY = 20; }
+                let cumD = (yr >= sY) ? d * (yr - sY + 1) : 0;
+                body.innerHTML += `<tr><td>第${yr}年(${startAge+yr}岁)</td><td>${Math.round(total*factor).toLocaleString()}</td><td>${(yr>=sY)?Math.round(d*factor).toLocaleString():'-'}</td><td>${cumD > 0 ? Math.round(cumD*factor).toLocaleString() : '-'}</td><td>${Math.round(cv*factor).toLocaleString()}</td><td style="font-weight:bold;color:var(--gain-color)">${Math.round((cv + cumD)*factor).toLocaleString()}</td></tr>`;
             }
         } else {
-            document.getElementById('header-row-1').innerHTML = `<th rowspan="2">年度(年龄)</th><th rowspan="2">累计保费</th><th colspan="2">主单(50%)</th><th colspan="2">副单(50%)</th><th rowspan="2">总利益</th>`;
-            document.getElementById('header-row-2').innerHTML = `<th>提取</th><th>现价</th><th>提取</th><th>现价</th>`;
-            for(let yr of [8, 15, 20, 30, 40, 60]) {
-                const half = (total * 0.5) * getMult('none', yr) * factor;
-                body.innerHTML += `<tr><td>${yr}年(${age+yr}岁)</td><td>${Math.round(total*factor).toLocaleString()}</td><td>-</td><td>${Math.round(half).toLocaleString()}</td><td>-</td><td>${Math.round(half).toLocaleString()}</td><td style="color:var(--gain-color); font-weight:bold;">${Math.round(half*2).toLocaleString()}</td></tr>`;
+            document.getElementById('h1').innerHTML = `<th rowspan="2">保单年度(年龄)</th><th rowspan="2">累计保费</th><th colspan="3">主保单 (${Math.round(ratio*100)}%)</th><th colspan="3">副保单 (${Math.round((1-ratio)*100)}%)</th><th rowspan="2">合计利益</th>`;
+            document.getElementById('h2').innerHTML = `<th>累计提取</th><th>账户现值</th><th>利益</th><th>累计提取</th><th>账户现值</th><th>利益</th>`;
+            const stratM = document.getElementById('strat-main').value;
+            const stratS = document.getElementById('strat-sub').value;
+            for(let yr = 8; yr <= (100 - startAge); yr++) {
+                if (yr > 10 && yr % 5 !== 0 && yr !== (100-startAge)) continue;
+                const cvM = (total * ratio) * getVal(stratM, yr);
+                const cvS = (total * (1-ratio)) * getVal(stratS, yr);
+                function getCumD(strat, tVal, yr) {
+                    let d = 0, sY = 999;
+                    if(strat === 'withdraw8_from8') { d = tVal * 0.08; sY = 8; }
+                    else if(strat === 'withdraw13_from15') { d = tVal * 0.13; sY = 15; }
+                    else if(strat === 'withdraw18_from20') { d = tVal * 0.18; sY = 20; }
+                    return (yr >= sY) ? d * (yr - sY + 1) : 0;
+                }
+                let mC = getCumD(stratM, total * ratio, yr);
+                let sC = getCumD(stratS, total * (1-ratio), yr);
+                body.innerHTML += `<tr><td>第${yr}年(${startAge+yr}岁)</td><td>${Math.round(total*factor).toLocaleString()}</td><td>${mC > 0 ? Math.round(mC*factor).toLocaleString() : '-'}</td><td>${Math.round(cvM*factor).toLocaleString()}</td><td>${Math.round((cvM+mC)*factor).toLocaleString()}</td><td>${sC > 0 ? Math.round(sC*factor).toLocaleString() : '-'}</td><td>${Math.round(cvS*factor).toLocaleString()}</td><td>${Math.round((cvS+sC)*factor).toLocaleString()}</td><td style="font-weight:bold;color:var(--gain-color)">${Math.round((cvM+cvS+mC+sC)*factor).toLocaleString()}</td></tr>`;
             }
         }
     }
 
-    function switchTab(id, el) {
-        document.querySelectorAll('.tab-section').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.getElementById(id).classList.add('active'); el.classList.add('active'); window.scrollTo(0,0);
-    }
-
-    function setCurrencyMode(m) {
-        currentCurrencyMode = m;
-        document.getElementById('btn-cny').style.background = m === 'CNY' ? 'var(--primary-color)' : 'transparent';
-        document.getElementById('btn-cny').style.color = m === 'CNY' ? '#fff' : '#333';
-        document.getElementById('btn-usd').style.background = m === 'USD' ? 'var(--primary-color)' : 'transparent';
-        document.getElementById('btn-usd').style.color = m === 'USD' ? '#fff' : '#333';
-        calculate();
-    }
-
-    function exportData() {
-        const d = { budget: document.getElementById('rmb-budget').value, age: document.getElementById('current-age').value, client: document.getElementById('client-name').value };
-        const blob = new Blob([JSON.stringify(d)], {type: "application/json"});
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `方案_${d.client || '客户'}.json`; a.click();
-    }
-
-    function importData(e) {
-        const reader = new FileReader(); reader.onload = (ev) => { const d = JSON.parse(ev.target.result); document.getElementById('rmb-budget').value = d.budget; document.getElementById('current-age').value = d.age; document.getElementById('client-name').value = d.client || ''; calculate(); }; reader.readAsText(e.target.files[0]);
-    }
-
+    // 分享功能：帶入 mode=client 參數與客戶姓名
     function generateShareLink() {
+        const name = document.getElementById('client-name').value || "贵宾";
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('mode', 'client');
+        currentUrl.searchParams.set('user', name);
+        
         document.getElementById('qrcode').innerHTML = "";
-        new QRCode(document.getElementById('qrcode'), { text: window.location.href, width: 180, height: 180 });
+        const qr = new QRCode(document.getElementById('qrcode'), {
+            text: currentUrl.toString(),
+            width: 220,
+            height: 220
+        });
+
+        // 轉為 img 供長按
+        setTimeout(() => {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (canvas) {
+                const img = document.createElement('img');
+                img.src = canvas.toDataURL("image/png");
+                document.getElementById('qrcode').innerHTML = "";
+                document.getElementById('qrcode').appendChild(img);
+            }
+        }, 400);
+
         document.getElementById('qr-modal').style.display = 'flex';
     }
 
     function closeQR() { document.getElementById('qr-modal').style.display = 'none'; }
+
+    // 初始化檢測：如果是客戶模式，自動應用簡體與唯讀
+    function checkViewMode() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('mode') === 'client') {
+            const clientName = params.get('user') || "贵宾";
+            document.getElementById('admin-tools').classList.add('hidden');
+            document.getElementById('main-nav').classList.add('hidden'); // 客戶頁不需導航
+            document.getElementById('client-msg').style.display = 'block';
+            document.getElementById('display-client-name').innerText = clientName;
+            
+            // 設為唯讀
+            document.querySelectorAll('input, select').forEach(el => el.disabled = true);
+        }
+        calculate();
+    }
+
+    function exportData() { 
+        const d = { budget: document.getElementById('rmb-budget').value, age: document.getElementById('current-age').value, client: document.getElementById('client-name').value };
+        const blob = new Blob([JSON.stringify(d)], {type: "application/json"});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); 
+        a.download = `方案_${d.client || '未命名'}.json`; a.click();
+    }
+
+    function importData(e) {
+        const reader = new FileReader();
+        reader.onload = (ev) => { 
+            const d = JSON.parse(ev.target.result); 
+            document.getElementById('rmb-budget').value = d.budget; 
+            document.getElementById('current-age').value = d.age; 
+            document.getElementById('client-name').value = d.client || '';
+            calculate(); 
+        }; 
+        reader.readAsText(e.target.files[0]);
+    }
+
+    function setCurr(c) {
+        curr = c;
+        document.getElementById('btn-cny').style.background = c === 'CNY' ? 'var(--primary-color)' : 'transparent';
+        document.getElementById('btn-cny').style.color = c === 'CNY' ? '#fff' : '#333';
+        document.getElementById('btn-usd').style.background = c === 'USD' ? 'var(--primary-color)' : 'transparent';
+        document.getElementById('btn-usd').style.color = c === 'USD' ? '#fff' : '#333';
+        calculate();
+    }
+
     document.getElementById('rmb-budget').addEventListener('input', calculate);
-    document.getElementById('enable-split').addEventListener('change', (e) => { 
+    document.getElementById('current-age').addEventListener('input', calculate);
+    document.getElementById('enable-split').addEventListener('change', (e) => {
         document.getElementById('single-config').classList.toggle('hidden', e.target.checked);
         document.getElementById('split-config').classList.toggle('hidden', !e.target.checked);
         calculate();
     });
-    window.onload = calculate;
+
+    window.onload = checkViewMode;
 </script>
 </body>
 </html>
