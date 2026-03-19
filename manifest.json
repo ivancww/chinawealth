@@ -1,7 +1,7 @@
 {
-  "name": "资产传承规划系统",
+  "name": "资产传承规划系统 Pro",
   "short_name": "资产传承",
-  "description": "友邦环宇盈活资产隔离与无限传承规划工具",
+  "description": "专业的资产传承与理财规划工具",
   "start_url": "index.html",
   "display": "standalone",
   "background_color": "#f4f6f9",
