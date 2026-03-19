@@ -3,13 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>资产传承规划系统 Pro V3.1.1</title>
+    <title>资产传承规划系统 Pro V3.1.2</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2980b9">
     <link rel="apple-touch-icon" href="logo_192.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -19,7 +18,7 @@
             --draw-blue: #2980b9; 
             --value-purple: #8e44ad;
         }
-        body { font-family: 'Noto Sans SC', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding-bottom: 80px; }
+        body { font-family: 'Noto Sans SC', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding-bottom: 80px; -webkit-touch-callout: default; }
         .tab-section { display: none; padding: 1rem; max-width: 1200px; margin: 0 auto; animation: fadeIn 0.4s; }
         .tab-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
@@ -48,7 +47,7 @@
         .nav-item.active .nav-text { color: var(--primary-color) !important; font-weight: bold; }
         .nav-icon { display: block; font-size: 1.2rem; }
         #qr-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; }
-        #client-welcome { display: none; background: #2980b9; color: white; padding: 15px; text-align: center; font-weight: bold; border-radius: 0 0 15px 15px; }
+        #client-welcome { display: none; background: #2980b9; color: white; padding: 15px; text-align: center; font-weight: bold; border-radius: 0 0 15px 15px; font-size: 1.1rem; }
         .feature-desc { text-align: left; color: #555; line-height: 1.6; margin-bottom: 1.5rem; font-size: 0.95rem; }
     </style>
 </head>
@@ -68,7 +67,7 @@
     <div class="card-container">
         <header id="admin-header">
             <h1>资产传承规划系统 Pro</h1>
-            <span class="version-tag">Version 3.1.1</span>
+            <span class="version-tag">Version 3.1.2</span>
         </header>
         <div class="action-bar" id="admin-actions">
             <input type="text" id="client-name" style="flex:1; padding:8px; border-radius:6px; border:1px solid #ddd;" placeholder="客户姓名">
@@ -174,17 +173,59 @@
     </div>
 </div>
 
-<div id="tab-currency" class="tab-section"><div class="card-container"><h2>🌍 多元货币转换</h2><img src="https://i.postimg.cc/DyWG959B/9種貨幣.png" class="hero-img"></div></div>
-<div id="tab-split-info" class="tab-section"><div class="card-container"><h2>✂️ 保单分拆选项</h2><img src="https://i.postimg.cc/m2c9vVvy/保單分拆.png" class="hero-img"></div></div>
-<div id="tab-hk" class="tab-section">
-    <div class="card-container">
-        <h2>🛡️ 资产隔离防火墙</h2>
-        <h3>⚖️ 防婚姻风险</h3><img src="https://i.postimg.cc/TYybzQzt/防婚姻風險.png" class="hero-img">
-        <h3>🏰 防纠纷风险</h3><img src="https://i.postimg.cc/jdWfpvpc/防糾紛風險.png" class="hero-img">
-        <h3>🌐 跨境隐私保护</h3><img src="https://i.postimg.cc/XvgBfPCz/跨境資產.png" class="hero-img">
+<div id="tab-currency" class="tab-section">
+    <div class="card-container" style="text-align: center;">
+        <h2>🌍 多元货币转换</h2>
+        <img src="https://i.postimg.cc/DyWG959B/9種貨幣.png" class="hero-img">
+        <div class="feature-desc">
+            <p><strong>灵活应对全球变局：</strong>从保单<span class="highlight-text">第 2 年起</span>，您即可申请自由转换保单货币，且<span class="highlight-text">每年可申请转换一次</span>。无论是孩子未来的留学计划、海外置业，还是您全球旅居养老，涵盖人民币、美元、港元、英镑、欧元等 9 种货币选项，都能助您有效对冲全球汇率风险。</p>
+        </div>
     </div>
 </div>
-<div id="tab-flex" class="tab-section"><div class="card-container"><h2>💼 灵活理赔支付</h2><img src="https://i.postimg.cc/HkXyxnsD/身故賠償.png" class="hero-img"></div></div>
+
+<div id="tab-split-info" class="tab-section">
+    <div class="card-container" style="text-align: center;">
+        <h2>✂️ 保单分拆选项</h2>
+        <img src="https://i.postimg.cc/m2c9vVvy/保單分拆.png" class="hero-img">
+        <div class="feature-desc">
+            <p><strong>一笔资金，多重用途：</strong>保单分拆是市场领先的传承功能，允许您将一份保单按比例拆分为多份独立的合同。分拆后的保单可以独立更改受保人、转换货币或设定不同的提取策略。完美解决多子女家庭的财产分配难题，同时兼顾您的养老与后代的传承。</p>
+        </div>
+    </div>
+</div>
+
+<div id="tab-hk" class="tab-section">
+    <div class="card-container" style="text-align: center;">
+        <h2>🛡️ 资产隔离防火墙</h2>
+        
+        <h3>⚖️ 1. 防婚姻风险 (专属个人金库)</h3>
+        <img src="https://i.postimg.cc/TYybzQzt/防婚姻風險.png" class="hero-img">
+        <div class="feature-desc">
+            <p>通过保单合同架构，预先指定血亲后代为被保人与受益人，财富以独立保单合约存在。<span class="highlight-text">有效隔离后代的婚后共同财产</span>，即便后代未来面临婚姻变动，保单资产仍能保持独立完整。</p>
+        </div>
+
+        <h3>🏰 2. 防纠纷风险 (避开繁琐继承)</h3>
+        <img src="https://i.postimg.cc/jdWfpvpc/防糾紛風險.png" class="hero-img">
+        <div class="feature-desc">
+            <p>直接指定受益人，理赔金不属于一般遗产范围，<span class="highlight-text">无需经过漫长、公开且昂贵的遗产认证 (Probate) 程序</span>。资产定向给付，流程私密且快速，彻底杜绝家族争产纠纷。</p>
+        </div>
+
+        <h3>🌐 3. 跨境隐私保护</h3>
+        <img src="https://i.postimg.cc/XvgBfPCz/跨境資產.png" class="hero-img">
+        <div class="feature-desc">
+            <p>资产配置于香港，由国际顶尖保险公司承保，受严格的法律保护与国际隐私制度约束，为您的家族财富建立一道跨地域的安全边界。</p>
+        </div>
+    </div>
+</div>
+
+<div id="tab-flex" class="tab-section">
+    <div class="card-container" style="text-align: center;">
+        <h2>💼 灵活理赔支付</h2>
+        <img src="https://i.postimg.cc/HkXyxnsD/身故賠償.png" class="hero-img">
+        <div class="feature-desc">
+            <p><strong>类信托管理，防止挥霍：</strong>您可以为受益人量身定制理赔领取方式。无论是应对紧急开支的“一笔过”，还是作为生活费保障的“分期定额领取”。未领取的余款更将留在保险公司继续享受<span class="highlight-text">复息增值</span>，让您的爱意细水长流，守护后代一生。</p>
+        </div>
+    </div>
+</div>
 
 <nav class="bottom-nav" id="main-nav">
     <div class="nav-item active" onclick="switchTab('tab-calculator', this)"><i class="fa-solid fa-calculator nav-icon"></i><span class="nav-text">测算</span></div>
@@ -338,19 +379,14 @@
     }
 
     function generateShareLink() {
-        const url = window.location.origin + window.location.pathname + '?mode=client&name=' + encodeURIComponent(document.getElementById('client-name').value) + '&b=' + document.getElementById('rmb-budget').value + '&a=' + document.getElementById('current-age').value + '&s=' + document.getElementById('enable-split').checked + '&r=' + document.getElementById('split-ratio').value + '&sm=' + document.getElementById('strat-main').value + '&ss=' + document.getElementById('strat-sub').value + '&sg=' + document.getElementById('strategy-single').value;
-        document.getElementById('qrcode').innerHTML = "";
-        new QRCode(document.getElementById('qrcode'), { text: url, width: 200, height: 200 });
-        setTimeout(() => {
-            const canvas = document.querySelector('#qrcode canvas');
-            if(canvas) {
-                const img = document.createElement('img');
-                img.src = canvas.toDataURL("image/png");
-                img.style.width = "200px";
-                document.getElementById('qrcode').innerHTML = "";
-                document.getElementById('qrcode').appendChild(img);
-            }
-        }, 600);
+        // 使用官方标准 API 生成真实的图片二维码，保证 iOS/Android 100% 可以长按识别
+        const clientName = encodeURIComponent(document.getElementById('client-name').value || '贵宾');
+        const url = window.location.origin + window.location.pathname + '?mode=client&name=' + clientName + '&b=' + document.getElementById('rmb-budget').value + '&a=' + document.getElementById('current-age').value + '&s=' + document.getElementById('enable-split').checked + '&r=' + document.getElementById('split-ratio').value + '&sm=' + document.getElementById('strat-main').value + '&ss=' + document.getElementById('strat-sub').value + '&sg=' + document.getElementById('strategy-single').value;
+        
+        const qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + encodeURIComponent(url);
+        
+        // 直接植入真实的 <img> 标签
+        document.getElementById('qrcode').innerHTML = `<img src="${qrUrl}" alt="专属方案二维码" style="width:200px; height:200px; display:block; margin:0 auto; -webkit-touch-callout: default;">`;
         document.getElementById('qr-modal').style.display = 'flex';
     }
 
