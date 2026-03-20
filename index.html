@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>资产传承规划系统 Pro</title>
+    <title>资产传承规划系统 Pro v1.3.0</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
@@ -21,7 +22,11 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
         .card-container { background: var(--card-bg-color); border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); padding: 1.5rem; margin-bottom: 2rem; }
         header { text-align: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem; }
-        header h1 { color: var(--primary-color); font-size: 1.6rem; margin: 0; }
+        
+        /* 更新：標題與版本號同一行顯示 */
+        header h1 { color: var(--primary-color); font-size: 1.6rem; margin: 0; display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap;}
+        .version-badge { font-size: 0.8rem; background: var(--primary-color); color: #fff; padding: 2px 8px; border-radius: 12px; font-weight: normal; }
+        
         h2 { color: var(--secondary-color); font-size: 1.2rem; border-left: 4px solid var(--primary-color); padding-left: 10px; margin: 1rem 0; }
         .grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
         .input-group { display: flex; flex-direction: column; margin-bottom: 1rem; }
@@ -37,19 +42,19 @@
         th { background-color: #f8f9fa; padding: 12px; border: 1px solid #eee; position: sticky; top: 0; z-index: 10; }
         td { padding: 10px; border: 1px solid #eee; }
         
-        /* 導航 */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); padding-bottom: env(safe-area-inset-bottom); z-index: 1000; }
         .nav-item { flex: 1; text-align: center; padding: 12px 0; color: #999; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center;}
         .nav-text { color: #e74c3c !important; font-weight: 500; margin-top: 2px; }
         .nav-item.active .nav-text { color: var(--primary-color) !important; font-weight: bold; }
         .nav-icon { display: block; font-size: 1.2rem; }
         
-        /* QR Modal */
         #qr-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; }
         #qrcode img { border: 12px solid white; border-radius: 8px; max-width: 220px; }
         
-        /* 客戶歡迎語 */
         .client-welcome { display: none; background: #fff4e5; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid #f39c12; color: #d35400; font-size: 1.1rem; font-weight: bold; }
+        
+        .update-log { margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px; border: 1px dashed #bdc3c7; font-size: 0.85rem; color: #7f8c8d; }
+        .update-log ul { margin-top: 5px; padding-left: 20px; }
     </style>
 </head>
 <body>
@@ -65,12 +70,11 @@
 <div id="tab-calculator" class="tab-section active">
     <div class="card-container">
         <header>
-            <h1>资产传承规划系统 Pro</h1>
-            <div style="text-align:center; font-size:10px; color:#ccc; margin-top:5px;">Version 1.2.0</div>
+            <h1>资产传承规划系统 Pro <span class="version-badge">v1.3.0</span></h1>
         </header>
         
         <div id="client-msg" class="client-welcome">
-            亲爱的 <span id="display-client-name"></span>，这是你专属的理财方案
+            亲爱的 <span id="display-client-name"></span>，这是你专属的理财方案。您可于下方自由调整预算进行测算。
         </div>
 
         <div class="action-bar" id="admin-tools">
@@ -168,6 +172,16 @@
                 </table>
             </div>
         </div>
+
+        <div id="update-log-section" class="update-log">
+            <strong><i class="fa-solid fa-code-branch"></i> Version 1.3.0 更新內容：</strong>
+            <ul>
+                <li>更新：「保单分拆」及「纠纷风险」配图</li>
+                <li>排版：优化了隔离页面的展示顺序（跨境优先）</li>
+                <li>权限：客户专属页面已开放自由测算功能，移除唯读限制</li>
+                <li>优化：版本号直接显示于标题后方</li>
+            </ul>
+        </div>
     </div>
 </div>
 
@@ -234,7 +248,7 @@
 </nav>
 
 <script>
-    const APP_VERSION = "1.2.0";
+    const APP_VERSION = "1.3.0";
     let curr = 'CNY'; const liveRate = 0.138;
     const mults = {
         'none': { 8: 1.165, 9: 1.244, 10: 1.32, 15: 1.86, 20: 2.71, 30: 5.85, 40: 10.99, 60: 38.73, 75: 99.596, 100: 480.821 },
@@ -352,17 +366,15 @@
 
     function closeQR() { document.getElementById('qr-modal').style.display = 'none'; }
 
-    // 初始化檢測：如果是客戶模式，會隱藏工具列，但【修改4】移除了唯讀限制，讓客戶可以自由操作
     function checkViewMode() {
         const params = new URLSearchParams(window.location.search);
         if (params.get('mode') === 'client') {
             const clientName = params.get('user') || "贵宾";
             document.getElementById('admin-tools').classList.add('hidden');
             document.getElementById('main-nav').classList.add('hidden'); 
+            document.getElementById('update-log-section').classList.add('hidden'); 
             document.getElementById('client-msg').style.display = 'block';
             document.getElementById('display-client-name').innerText = clientName;
-            
-            // 注意：這裡已經刪除了 input, select disabled 的代碼，讓客戶可以自行輸入
         }
         calculate();
     }
