@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>资产传承规划系统 Pro v1.5.0</title>
+    <title>资产传承规划系统 Pro v1.6.1</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2980b9">
@@ -51,14 +51,13 @@
         }
 
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); padding-bottom: env(safe-area-inset-bottom); z-index: 1000; }
-        .nav-item { flex: 1; text-align: center; padding: 12px 0; color: #999; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center;}
+        .nav-item { flex: 1; text-align: center; padding: 12px 0; color: #999; font-size: 0.7rem; cursor: pointer; display: flex; flex-direction: column; align-items: center;}
         .nav-text { color: #e74c3c !important; font-weight: 500; margin-top: 2px; }
         .nav-item.active .nav-text { color: var(--primary-color) !important; font-weight: bold; }
-        .nav-icon { display: block; font-size: 1.2rem; }
+        .nav-icon { display: block; font-size: 1.1rem; }
         
         #qr-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; }
         
-        /* 更新：針對 Android 長按掃描強化 CSS 屬性 */
         #qrcode img { 
             border: 12px solid white; 
             border-radius: 8px; 
@@ -73,6 +72,8 @@
         .update-log { margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 8px; border: 1px dashed #bdc3c7; font-size: 0.85rem; color: #7f8c8d; }
         .update-log ul { margin-top: 10px; padding-left: 20px; }
         .log-header { display: flex; justify-content: space-between; align-items: center; cursor: pointer; color: #34495e; }
+        .feature-desc p { text-align: left; color: #555; line-height: 1.6; margin-bottom: 1rem; font-size: 0.95rem; }
+        .highlight-text { color: #e74c3c; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -88,7 +89,7 @@
 <div id="tab-calculator" class="tab-section active">
     <div class="card-container">
         <header>
-            <h1>资产传承规划系统 Pro <span class="version-badge">v1.5.0</span></h1>
+            <h1>资产传承规划系统 Pro <span class="version-badge">v1.6.1</span></h1>
         </header>
         
         <div id="client-msg" class="client-welcome">
@@ -197,16 +198,29 @@
 
         <div id="update-log-section" class="update-log">
             <div class="log-header" onclick="toggleUpdateLog()">
-                <strong><i class="fa-solid fa-code-branch"></i> Version 1.5.0 更新內容</strong>
+                <strong><i class="fa-solid fa-code-branch"></i> Version 1.6.1 更新內容</strong>
                 <i id="log-toggle-icon" class="fa-solid fa-eye-slash" style="font-size: 1.2rem;"></i>
             </div>
             <ul id="log-content" class="hidden">
+                <li>文案：精简「传承」页面说明，直接展示三大核心操作与效果</li>
+                <li>内容：新增「传承」专属页面，加入无限次更改受保人及无缝传承说明</li>
+                <li>导航：底部导览列新增「传承」按键并适配版面空间</li>
                 <li>界面：底部更新日志加入隐藏/显示开关</li>
                 <li>文案：隔离页面的「防纠纷风险」更名为「防债务风险」</li>
                 <li>视觉：分拆保单的累计提取（蓝色）与账户现值（紫色）颜色同步</li>
-                <li>修复：加强 Android 手机长按二维码识别支援</li>
-                <li>系统：补回 iOS/Android 添加到桌面的 App Logo 支援</li>
             </ul>
+        </div>
+    </div>
+</div>
+
+<div id="tab-legacy" class="tab-section">
+    <div class="card-container" style="text-align: center;">
+        <h2>👑 家族基业长青：打破时间界限的财富无限传承</h2>
+        <img src="https://i.postimg.cc/sD97mqrN/wu-xian-chuan-cheng.png" class="hero-img">
+        <div class="feature-desc">
+            <p><strong>无限次更改受保人：</strong> 保单生效满一年后，您可随时、<span class="highlight-text">无限次</span>将受保人更改为其他家族成员（如子女、未来的孙辈）。豁免健康审查，将财富的增值期无限延长。</p>
+            <p><strong>预设第二受保人：</strong> 您可预先指定接替人选。若现任受保人发生不幸，第二受保人将自动且无缝地接替，有效抵御突发风险。</p>
+            <p><strong>财富跨世代滚存：</strong> 无论是主动更改还是自动接替，<span class="highlight-text">保单价值均完全不受影响</span>。不仅免除了繁琐的遗产继承手续，更让复利雪球跨越世代，真正实现家族财富的无限传承。</p>
         </div>
     </div>
 </div>
@@ -267,6 +281,7 @@
 
 <nav class="bottom-nav" id="main-nav">
     <div class="nav-item active" onclick="switchTab('tab-calculator', this)"><i class="fa-solid fa-calculator nav-icon"></i><span class="nav-text">测算</span></div>
+    <div class="nav-item" onclick="switchTab('tab-legacy', this)"><i class="fa-solid fa-crown nav-icon"></i><span class="nav-text">传承</span></div>
     <div class="nav-item" onclick="switchTab('tab-currency', this)"><i class="fa-solid fa-earth-asia nav-icon"></i><span class="nav-text">货币</span></div>
     <div class="nav-item" onclick="switchTab('tab-split-info', this)"><i class="fa-solid fa-chart-pie nav-icon"></i><span class="nav-text">分拆</span></div>
     <div class="nav-item" onclick="switchTab('tab-hk', this)"><i class="fa-solid fa-shield-halved nav-icon"></i><span class="nav-text">隔离</span></div>
@@ -274,7 +289,7 @@
 </nav>
 
 <script>
-    const APP_VERSION = "1.5.0";
+    const APP_VERSION = "1.6.1";
     let curr = 'CNY'; const liveRate = 0.138;
     const mults = {
         'none': { 8: 1.165, 9: 1.244, 10: 1.32, 15: 1.86, 20: 2.71, 30: 5.85, 40: 10.99, 60: 38.73, 75: 99.596, 100: 480.821 },
@@ -283,14 +298,12 @@
         'withdraw18_from20': { 20: 2.52, 30: 2.93, 40: 3.01, 60: 3.78, 75: 4.50, 100: 8.50 }
     };
 
-    // 註冊 Service Worker 確保 PWA/桌面圖示生效
     if ('serviceWorker' in navigator) { 
         window.addEventListener('load', () => { 
             navigator.serviceWorker.register('sw.js').catch(err => console.log('SW 註冊失敗', err)); 
         }); 
     }
 
-    // 更新日誌顯示切換
     function toggleUpdateLog() {
         const content = document.getElementById('log-content');
         const icon = document.getElementById('log-toggle-icon');
@@ -375,7 +388,6 @@
                 let mC = getCumD(stratM, total * ratio, yr);
                 let sC = getCumD(stratS, total * (1-ratio), yr);
                 
-                // 更新：分拆後主/副保單的「累計提取」改藍色，「帳戶現值」改紫色
                 body.innerHTML += `<tr>
                     <td>第${yr}年(${startAge+yr}岁)</td>
                     <td>${Math.round(total*factor).toLocaleString()}</td>
@@ -486,7 +498,6 @@
         a.download = `方案_${clientName}.json`; a.click();
     }
 
-    // 更新：強化 Android 二維碼生成與長按掃描邏輯
     function generateShareLink() {
         const name = document.getElementById('client-name').value || "贵宾";
         const currentUrl = new URL(window.location.href);
@@ -512,13 +523,12 @@
         setTimeout(() => {
             const canvas = qrContainer.querySelector('canvas');
             const generatedImg = qrContainer.querySelector('img');
-            // 直接將 QRCode.js 生成的隱藏 img 顯示出來，這對 Android 支援最好
             if (canvas && generatedImg) {
                 generatedImg.style.display = "block";
                 generatedImg.style.maxWidth = "100%";
                 generatedImg.style.pointerEvents = "auto";
                 generatedImg.style.userSelect = "auto";
-                generatedImg.style.webkitTouchCallout = "default"; // 強制開啟長按選單
+                generatedImg.style.webkitTouchCallout = "default";
                 canvas.style.display = "none";
             }
         }, 300);
