@@ -3,29 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>资产传承规划系统 Pro V3.1.2</title>
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#2980b9">
-    <link rel="apple-touch-icon" href="logo_192.png">
+    <title>资产传承规划系统 Pro</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --bg-color: #f4f6f9; --card-bg-color: #ffffff; --text-color: #2c3e50; --label-color: #7f8c8d;
+            --bg-color: #f4f6f9;
+            --card-bg-color: #ffffff; --text-color: #2c3e50; --label-color: #7f8c8d;
             --primary-color: #2980b9; --secondary-color: #34495e; --border-color: #ecf0f1;
             --highlight-color: #e74c3c; --gain-color: #27ae60; --gold-color: #f39c12;
-            --draw-blue: #2980b9; 
-            --value-purple: #8e44ad;
         }
-        body { font-family: 'Noto Sans SC', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding-bottom: 80px; -webkit-touch-callout: default; }
+        body { font-family: 'Noto Sans SC', sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; padding-bottom: 80px; }
         .tab-section { display: none; padding: 1rem; max-width: 1200px; margin: 0 auto; animation: fadeIn 0.4s; }
         .tab-section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; } }
         .card-container { background: var(--card-bg-color); border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); padding: 1.5rem; margin-bottom: 2rem; }
         header { text-align: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem; }
         header h1 { color: var(--primary-color); font-size: 1.6rem; margin: 0; }
-        .version-tag { font-size: 0.7rem; color: #bbb; margin-top: 5px; display: block; }
         h2 { color: var(--secondary-color); font-size: 1.2rem; border-left: 4px solid var(--primary-color); padding-left: 10px; margin: 1rem 0; }
         .grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
         .input-group { display: flex; flex-direction: column; margin-bottom: 1rem; }
@@ -40,83 +36,80 @@
         table { width: 100%; border-collapse: collapse; text-align: center; font-size: 0.8rem; min-width: 1000px; }
         th { background-color: #f8f9fa; padding: 12px; border: 1px solid #eee; position: sticky; top: 0; z-index: 10; }
         td { padding: 10px; border: 1px solid #eee; }
-        .hero-img { width: 100%; border-radius: 10px; margin-bottom: 1rem; border: 1px solid #eee; }
+        
+        /* 導航 */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); padding-bottom: env(safe-area-inset-bottom); z-index: 1000; }
         .nav-item { flex: 1; text-align: center; padding: 12px 0; color: #999; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center;}
         .nav-text { color: #e74c3c !important; font-weight: 500; margin-top: 2px; }
         .nav-item.active .nav-text { color: var(--primary-color) !important; font-weight: bold; }
         .nav-icon { display: block; font-size: 1.2rem; }
+        
+        /* QR Modal */
         #qr-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 2000; justify-content: center; align-items: center; }
-        #client-welcome { display: none; background: #2980b9; color: white; padding: 15px; text-align: center; font-weight: bold; border-radius: 0 0 15px 15px; font-size: 1.1rem; }
-        .feature-desc { text-align: left; color: #555; line-height: 1.6; margin-bottom: 1.5rem; font-size: 0.95rem; }
+        #qrcode img { border: 12px solid white; border-radius: 8px; max-width: 220px; }
+        
+        /* 客戶歡迎語 */
+        .client-welcome { display: none; background: #fff4e5; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid #f39c12; color: #d35400; font-size: 1.1rem; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div id="client-welcome"></div>
-
 <div id="qr-modal">
-    <div style="background:#fff; padding:2rem; border-radius:12px; text-align:center; max-width: 85%;">
-        <p style="margin-bottom:10px; font-weight:bold; color:#333;">长按下方二维码识别或扫码</p>
-        <div id="qrcode" style="display: flex; justify-content: center; padding: 10px; background: white;"></div>
-        <button class="btn" style="background:#e74c3c; margin-top:1.5rem; width:100%;" onclick="closeQR()">关闭</button>
+    <div style="background:#fff; padding:2rem; border-radius:12px; text-align:center; position: relative; width: 80%; max-width: 320px;">
+        <div id="qrcode" style="display: flex; justify-content: center; margin-bottom: 10px;"></div>
+        <p style="color: #666; font-size: 0.85rem;">温馨提示：长按图片可识别或保存</p>
+        <button class="btn" style="background:#e74c3c; width: 100%; margin-top: 10px;" onclick="closeQR()">关闭</button>
     </div>
 </div>
 
 <div id="tab-calculator" class="tab-section active">
     <div class="card-container">
-        <header id="admin-header">
+        <header>
             <h1>资产传承规划系统 Pro</h1>
-            <span class="version-tag">Version 3.1.2</span>
+            <div style="text-align:center; font-size:10px; color:#ccc; margin-top:5px;">Version 1.2.0</div>
         </header>
-        <div class="action-bar" id="admin-actions">
+        
+        <div id="client-msg" class="client-welcome">
+            亲爱的 <span id="display-client-name"></span>，这是你专属的理财方案
+        </div>
+
+        <div class="action-bar" id="admin-tools">
             <input type="text" id="client-name" style="flex:1; padding:8px; border-radius:6px; border:1px solid #ddd;" placeholder="客户姓名">
-            <button class="btn" style="background:#27ae60;" onclick="saveToLocal()">保存</button>
-            <div class="input-group" style="margin:0; min-width:140px;">
-                <select id="local-plans" onchange="loadLocalPlan()" style="padding:5px; font-size:0.8rem;">
-                    <option value="">-- 方案管理 --</option>
-                </select>
-            </div>
-            <button class="btn" style="background:#8e44ad;" onclick="exportData()">汇出</button>
+            <button class="btn" style="background:#27ae60;" onclick="exportData()">保存</button>
             <button class="btn" style="background:#f39c12;" onclick="document.getElementById('import-file').click()">汇入</button>
             <input type="file" id="import-file" class="hidden" onchange="importData(event)">
-            <button class="btn" style="background:#2980b9;" onclick="generateShareLink()">分享</button>
+            <button class="btn" style="background:#2980b9;" onclick="generateShareLink()">分享方案</button>
         </div>
 
         <div class="currency-box">
             <h2>🌍 第一步：设定配置预算 (5年缴)</h2>
             <div class="grid-layout">
-                <div class="input-group">
-                    <label>年缴预算 (RMB ¥)</label>
-                    <input type="text" id="rmb-budget" value="100,000" oninput="formatCurrencyInput(this)">
-                </div>
-                <div class="input-group">
-                    <label>5年累计总保费 (RMB ¥)</label>
-                    <input type="text" id="total-premium-display" readonly style="background:#eee; font-weight:bold; color:var(--highlight-color);">
-                </div>
-                <div class="input-group">
-                    <label>目前年龄</label>
-                    <input type="number" id="current-age" value="30" oninput="calculate()">
-                </div>
+                <div class="input-group"><label>年缴预算 (RMB ¥)</label><input type="text" id="rmb-budget" value="100,000"></div>
+                <div class="input-group"><label>5年累计总保费 (RMB ¥)</label><input type="text" id="total-premium-display" readonly style="background:#eee; font-weight:bold; color:var(--highlight-color);"></div>
+                <div class="input-group"><label>目前年龄</label><input type="number" id="current-age" value="30" min="0"></div>
             </div>
         </div>
 
         <div class="split-control">
             <div style="display:flex; align-items:center; gap:10px;">
-                <input type="checkbox" id="enable-split" style="width:20px; height:20px;" onchange="toggleSplit()">
+                <input type="checkbox" id="enable-split" style="width:20px; height:20px;">
                 <h2 style="margin:0; border:none; color:#d35400;">第二步：行使保单分拆选项</h2>
             </div>
             
-            <div id="single-config" class="input-group" style="margin-top:10px;">
-                <label>专款用途</label>
-                <select id="purpose-single"><option>养老金 / 资产传承</option><option>子女生活保障</option></select>
-                <label style="margin-top:10px;">提取策略</label>
-                <select id="strategy-single" onchange="calculate()">
-                    <option value="none">【资产滚存】不提取</option>
-                    <option value="withdraw8_from8">第 8 年起提取 8%</option>
-                    <option value="withdraw13_from15">第 15 年起提取 13%</option>
-                    <option value="withdraw18_from20">第 20 年起提取 18%</option>
-                </select>
+            <div id="single-config" class="grid-layout" style="margin-top:10px;">
+                <div class="input-group">
+                    <label>专款用途</label>
+                    <select id="usage-single"><option>养老金 / 资产传承</option><option>子女生活保障</option></select>
+                </div>
+                <div class="input-group">
+                    <label>提取策略</label>
+                    <select id="strategy-single" onchange="calculate()">
+                        <option value="none">【资产滚存】不提取</option>
+                        <option value="withdraw8_from8">第 8 年起提取 8%</option>
+                        <option value="withdraw13_from15">第 15 年起提取 13%</option>
+                        <option value="withdraw18_from20">第 20 年起提取 18%</option>
+                    </select>
+                </div>
             </div>
 
             <div id="split-config" class="hidden" style="margin-top:15px; border-top:1px solid #fde3a7; padding-top:10px;">
@@ -133,7 +126,7 @@
                 <div class="grid-layout" style="margin-top:10px;">
                     <div class="input-group">
                         <label>主保单用途</label>
-                        <select><option>养老金 / 资产传承</option><option>子女生活保障</option></select>
+                        <select id="usage-m"><option>养老金 / 资产传承</option><option>子女生活保障</option></select>
                         <label style="margin-top:5px;">主策略</label>
                         <select id="strat-main" onchange="calculate()">
                             <option value="none">资产滚存</option>
@@ -144,7 +137,7 @@
                     </div>
                     <div class="input-group">
                         <label>副保单用途</label>
-                        <select><option>子女生活保障</option><option>养老金 / 资产传承</option></select>
+                        <select id="usage-s"><option>子女生活保障</option><option>养老金 / 资产传承</option></select>
                         <label style="margin-top:5px;">副策略</label>
                         <select id="strat-sub" onchange="calculate()">
                             <option value="none">资产滚存</option>
@@ -161,14 +154,19 @@
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <h2>📈 利益演示 (至100岁)</h2>
                 <div style="text-align:right;">
-                    <p style="font-size:0.75rem; color:#888; margin:0;">实时汇率：1 RMB = 0.138 USD</p>
+                    <p style="font-size:0.75rem; color:#888; margin:0;">实时汇率参考：1 RMB = 0.138 USD</p>
                     <div style="background:#eee; border-radius:20px; padding:2px; display:inline-flex; margin-top:4px;">
                         <button id="btn-cny" class="btn" style="background:var(--primary-color); border-radius:20px; min-width:40px;" onclick="setCurr('CNY')">¥</button>
                         <button id="btn-usd" class="btn" style="background:transparent; color:#333; border-radius:20px; min-width:40px;" onclick="setCurr('USD')">$</button>
                     </div>
                 </div>
             </div>
-            <div class="table-wrapper"><table id="main-table"><thead><tr id="h1"></tr><tr id="h2"></tr></thead><tbody id="res-body"></tbody></table></div>
+            <div class="table-wrapper">
+                <table id="main-table">
+                    <thead><tr id="h1"></tr><tr id="h2"></tr></thead>
+                    <tbody id="res-body"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
@@ -178,7 +176,7 @@
         <h2>🌍 多元货币转换</h2>
         <img src="https://i.postimg.cc/DyWG959B/9種貨幣.png" class="hero-img">
         <div class="feature-desc">
-            <p><strong>灵活应对全球变局：</strong>从保单<span class="highlight-text">第 2 年起</span>，您即可申请自由转换保单货币，且<span class="highlight-text">每年可申请转换一次</span>。无论是孩子未来的留学计划、海外置业，还是您全球旅居养老，涵盖人民币、美元、港元、英镑、欧元等 9 种货币选项，都能助您有效对冲全球汇率风险。</p>
+            <p><strong>灵活应对全球变局：</strong>从保单<span class="highlight-text">第 2 年起</span>，您即可申请自由转换保单货币，且<span class="highlight-text">每年可申请转换一次</span>。无论未来是孩子去英国留学需要英镑，还是您打算在全球旅居需要美元，均可一键对接，有效对冲汇率风险。</p>
         </div>
     </div>
 </div>
@@ -186,9 +184,9 @@
 <div id="tab-split-info" class="tab-section">
     <div class="card-container" style="text-align: center;">
         <h2>✂️ 保单分拆选项</h2>
-        <img src="https://i.postimg.cc/m2c9vVvy/保單分拆.png" class="hero-img">
+        <img src="https://i.postimg.cc/J42dvFVN/保單分拆2.png" class="hero-img">
         <div class="feature-desc">
-            <p><strong>一笔资金，多重用途：</strong>保单分拆是市场领先的传承功能，允许您将一份保单按比例拆分为多份独立的合同。分拆后的保单可以独立更改受保人、转换货币或设定不同的提取策略。完美解决多子女家庭的财产分配难题，同时兼顾您的养老与后代的传承。</p>
+            <p><strong>一笔资金，多重用途：</strong>通过保单分拆选项，您可以将一份保单按比例拆分为两份独立的合同。分拆后的保单可以独立更改受保人、转换货币或设定不同的提取方案。这不仅解决了多子女家庭的财产分配难题，更满足不同人生阶段的需求。</p>
         </div>
     </div>
 </div>
@@ -197,22 +195,22 @@
     <div class="card-container" style="text-align: center;">
         <h2>🛡️ 资产隔离防火墙</h2>
         
-        <h3>⚖️ 1. 防婚姻风险 (专属个人金库)</h3>
-        <img src="https://i.postimg.cc/TYybzQzt/防婚姻風險.png" class="hero-img">
-        <div class="feature-desc">
-            <p>通过保单合同架构，预先指定血亲后代为被保人与受益人，财富以独立保单合约存在。<span class="highlight-text">有效隔离后代的婚后共同财产</span>，即便后代未来面临婚姻变动，保单资产仍能保持独立完整。</p>
-        </div>
-
-        <h3>🏰 2. 防纠纷风险 (避开繁琐继承)</h3>
-        <img src="https://i.postimg.cc/jdWfpvpc/防糾紛風險.png" class="hero-img">
-        <div class="feature-desc">
-            <p>直接指定受益人，理赔金不属于一般遗产范围，<span class="highlight-text">无需经过漫长、公开且昂贵的遗产认证 (Probate) 程序</span>。资产定向给付，流程私密且快速，彻底杜绝家族争产纠纷。</p>
-        </div>
-
-        <h3>🌐 3. 跨境隐私保护</h3>
+        <h3>🌐 1. 跨地域隐私保护</h3>
         <img src="https://i.postimg.cc/XvgBfPCz/跨境資產.png" class="hero-img">
         <div class="feature-desc">
-            <p>资产配置于香港，由国际顶尖保险公司承保，受严格的法律保护与国际隐私制度约束，为您的家族财富建立一道跨地域的安全边界。</p>
+            <p>由香港顶尖保险公司承保，享有国际金融中心的高度隐私保护与制度优势，为您的家族财富建立一道坚不可摧的安全边界。</p>
+        </div>
+
+        <h3>🏰 2. 防纠纷风险</h3>
+        <img src="https://i.postimg.cc/HshPRND6/債務風險2.png" class="hero-img">
+        <div class="feature-desc">
+            <p>直接指定受益人，理赔金不属于遗产，<span class="highlight-text">无需经过漫长且昂贵的遗产认证程序</span>。资产给付私密且快速，彻底杜绝家族争产风险。</p>
+        </div>
+
+        <h3>⚖️ 3. 防婚姻风险</h3>
+        <img src="https://i.postimg.cc/TYybzQzt/防婚姻風險.png" class="hero-img">
+        <div class="feature-desc">
+            <p>通过预先指定血亲后代为被保人与受益人，财富以独立保单合约存在。理赔时资金直达指定血亲，<span class="highlight-text">有效避免与后代婚后财产混淆</span>，确保家族财富代代相传。</p>
         </div>
     </div>
 </div>
@@ -222,7 +220,7 @@
         <h2>💼 灵活理赔支付</h2>
         <img src="https://i.postimg.cc/HkXyxnsD/身故賠償.png" class="hero-img">
         <div class="feature-desc">
-            <p><strong>类信托管理，防止挥霍：</strong>您可以为受益人量身定制理赔领取方式。无论是应对紧急开支的“一笔过”，还是作为生活费保障的“分期定额领取”。未领取的余款更将留在保险公司继续享受<span class="highlight-text">复息增值</span>，让您的爱意细水长流，守护后代一生。</p>
+            <p><strong>类信托管理，防止挥霍：</strong>您可以定制多种理赔支付方式，如“一笔过”、“定额分期”或“递增支付”。未领取的余款更将留在保险公司继续享受<span class="highlight-text">复息增值</span>，确保财富守护力生生不息。</p>
         </div>
     </div>
 </div>
@@ -236,8 +234,7 @@
 </nav>
 
 <script>
-    if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); }); }
-    
+    const APP_VERSION = "1.2.0";
     let curr = 'CNY'; const liveRate = 0.138;
     const mults = {
         'none': { 8: 1.165, 9: 1.244, 10: 1.32, 15: 1.86, 20: 2.71, 30: 5.85, 40: 10.99, 60: 38.73, 75: 99.596, 100: 480.821 },
@@ -245,12 +242,6 @@
         'withdraw13_from15': { 15: 1.73, 20: 1.78, 30: 2.02, 40: 2.01, 75: 2.382, 100: 3.863 },
         'withdraw18_from20': { 20: 2.52, 30: 2.93, 40: 3.01, 60: 3.78, 75: 4.50, 100: 8.50 }
     };
-
-    function formatCurrencyInput(input) {
-        let value = input.value.replace(/,/g, '');
-        if (!isNaN(value) && value !== "") { input.value = Number(value).toLocaleString(); }
-        calculate();
-    }
 
     function getVal(strat, yr) {
         const m = mults[strat] || mults['none'];
@@ -274,172 +265,145 @@
         body.innerHTML = '';
 
         if (!isSplit) {
-            document.getElementById('h1').innerHTML = `<th rowspan="2">保单年度(年龄)</th><th rowspan="2">累计保费</th><th colspan="4">预期收益</th>`;
+            document.getElementById('h1').innerHTML = `<th rowspan="2">保单年度(年龄)</th><th rowspan="2">累计保费</th><th colspan="4">预期收益 (单一保单)</th>`;
             document.getElementById('h2').innerHTML = `<th>年提取</th><th>累计提取</th><th>账户现值</th><th>合计利益</th>`;
             const strat = document.getElementById('strategy-single').value;
             for(let yr = 8; yr <= (100 - startAge); yr++) {
                 if (yr > 10 && yr % 5 !== 0 && yr !== (100-startAge)) continue;
                 const cv = total * getVal(strat, yr);
-                let draw = 0, startYr = 999;
-                if(strat === 'withdraw8_from8') { draw = total * 0.08; startYr = 8; }
-                else if(strat === 'withdraw13_from15') { draw = total * 0.13; startYr = 15; }
-                else if(strat === 'withdraw18_from20') { draw = total * 0.18; startYr = 20; }
-                let cD = (yr >= startYr) ? draw : 0, cumD = (yr >= startYr) ? draw * (yr - startYr + 1) : 0;
-                body.innerHTML += `<tr><td>第${yr}年(${startAge+yr})</td><td>${Math.round(total*factor).toLocaleString()}</td><td>${cD > 0 ? Math.round(cD*factor).toLocaleString() : '-'}</td><td style="color:var(--draw-blue); font-weight:bold;">${cumD > 0 ? Math.round(cumD*factor).toLocaleString() : '-'}</td><td style="color:var(--value-purple); font-weight:bold;">${Math.round(cv*factor).toLocaleString()}</td><td style="color:var(--gain-color);font-weight:bold;">${Math.round((cv+cumD)*factor).toLocaleString()}</td></tr>`;
+                let d = 0, sY = 999;
+                if(strat === 'withdraw8_from8') { d = total * 0.08; sY = 8; }
+                else if(strat === 'withdraw13_from15') { d = total * 0.13; sY = 15; }
+                else if(strat === 'withdraw18_from20') { d = total * 0.18; sY = 20; }
+                let cumD = (yr >= sY) ? d * (yr - sY + 1) : 0;
+                body.innerHTML += `<tr><td>第${yr}年(${startAge+yr}岁)</td><td>${Math.round(total*factor).toLocaleString()}</td><td>${(yr>=sY)?Math.round(d*factor).toLocaleString():'-'}</td><td>${cumD > 0 ? Math.round(cumD*factor).toLocaleString() : '-'}</td><td>${Math.round(cv*factor).toLocaleString()}</td><td style="font-weight:bold;color:var(--gain-color)">${Math.round((cv + cumD)*factor).toLocaleString()}</td></tr>`;
             }
         } else {
-            document.getElementById('h1').innerHTML = `<th rowspan="2">年度(年龄)</th><th rowspan="2">总保费</th><th colspan="3">主保单(${ratio*100}%)</th><th colspan="3">副保单(${Math.round((1-ratio)*100)}%)</th><th rowspan="2">合计利益</th>`;
+            document.getElementById('h1').innerHTML = `<th rowspan="2">保单年度(年龄)</th><th rowspan="2">累计保费</th><th colspan="3">主保单 (${Math.round(ratio*100)}%)</th><th colspan="3">副保单 (${Math.round((1-ratio)*100)}%)</th><th rowspan="2">合计利益</th>`;
             document.getElementById('h2').innerHTML = `<th>累计提取</th><th>账户现值</th><th>利益</th><th>累计提取</th><th>账户现值</th><th>利益</th>`;
-            const sM = document.getElementById('strat-main').value, sS = document.getElementById('strat-sub').value;
+            const stratM = document.getElementById('strat-main').value;
+            const stratS = document.getElementById('strat-sub').value;
             for(let yr = 8; yr <= (100 - startAge); yr++) {
                 if (yr > 10 && yr % 5 !== 0 && yr !== (100-startAge)) continue;
-                const cvM = (total * ratio) * getVal(sM, yr), cvS = (total * (1-ratio)) * getVal(sS, yr);
-                function getD(s, v, y) {
-                    let d = 0, sy = 999;
-                    if(s === 'withdraw8_from8') { d = v * 0.08; sy = 8; }
-                    else if(s === 'withdraw13_from15') { d = v * 0.13; sy = 15; }
-                    else if(s === 'withdraw18_from20') { d = v * 0.18; sy = 20; }
-                    return (y >= sy) ? d * (y - sy + 1) : 0;
+                const cvM = (total * ratio) * getVal(stratM, yr);
+                const cvS = (total * (1-ratio)) * getVal(stratS, yr);
+                function getCumD(strat, tVal, yr) {
+                    let d = 0, sY = 999;
+                    if(strat === 'withdraw8_from8') { d = tVal * 0.08; sY = 8; }
+                    else if(strat === 'withdraw13_from15') { d = tVal * 0.13; sY = 15; }
+                    else if(strat === 'withdraw18_from20') { d = tVal * 0.18; sY = 20; }
+                    return (yr >= sY) ? d * (yr - sY + 1) : 0;
                 }
-                let mCum = getD(sM, total*ratio, yr), sCum = getD(sS, total*(1-ratio), yr);
-                body.innerHTML += `<tr><td>${yr}(${startAge+yr})</td><td>${Math.round(total*factor).toLocaleString()}</td><td style="color:var(--draw-blue); font-weight:bold;">${mCum > 0 ? Math.round(mCum*factor).toLocaleString() : '-'}</td><td style="color:var(--value-purple); font-weight:bold;">${Math.round(cvM*factor).toLocaleString()}</td><td>${Math.round((cvM+mCum)*factor).toLocaleString()}</td><td style="color:var(--draw-blue); font-weight:bold;">${sCum > 0 ? Math.round(sCum*factor).toLocaleString() : '-'}</td><td style="color:var(--value-purple); font-weight:bold;">${Math.round(cvS*factor).toLocaleString()}</td><td>${Math.round((cvS+sCum)*factor).toLocaleString()}</td><td style="color:var(--gain-color);font-weight:bold;">${Math.round((cvM+cvS+mCum+sCum)*factor).toLocaleString()}</td></tr>`;
+                let mC = getCumD(stratM, total * ratio, yr);
+                let sC = getCumD(stratS, total * (1-ratio), yr);
+                body.innerHTML += `<tr><td>第${yr}年(${startAge+yr}岁)</td><td>${Math.round(total*factor).toLocaleString()}</td><td>${mC > 0 ? Math.round(mC*factor).toLocaleString() : '-'}</td><td>${Math.round(cvM*factor).toLocaleString()}</td><td>${Math.round((cvM+mC)*factor).toLocaleString()}</td><td>${sC > 0 ? Math.round(sC*factor).toLocaleString() : '-'}</td><td>${Math.round(cvS*factor).toLocaleString()}</td><td>${Math.round((cvS+sC)*factor).toLocaleString()}</td><td style="font-weight:bold;color:var(--gain-color)">${Math.round((cvM+cvS+mC+sC)*factor).toLocaleString()}</td></tr>`;
             }
         }
     }
 
-    function toggleSplit() {
-        const isSplit = document.getElementById('enable-split').checked;
-        document.getElementById('single-config').classList.toggle('hidden', isSplit);
-        document.getElementById('split-config').classList.toggle('hidden', !isSplit);
-        calculate();
-    }
-
-    function saveToLocal() {
-        const name = document.getElementById('client-name').value;
-        if (!name) { alert("请输入客户姓名以保存方案"); return; }
-        const data = {
-            budget: document.getElementById('rmb-budget').value,
-            age: document.getElementById('current-age').value,
-            split: document.getElementById('enable-split').checked,
-            ratio: document.getElementById('split-ratio').value,
-            sm: document.getElementById('strat-main').value,
-            ss: document.getElementById('strat-sub').value,
-            sg: document.getElementById('strategy-single').value
-        };
-        localStorage.setItem('plan_' + name, JSON.stringify(data));
-        updateLocalList();
-        alert("方案已成功保存至本地管理");
-    }
-
-    function updateLocalList() {
-        const select = document.getElementById('local-plans');
-        select.innerHTML = '<option value="">-- 方案管理 --</option>';
-        for (let i = 0; i < localStorage.length; i++) {
-            const key = localStorage.key(i);
-            if (key.startsWith('plan_')) {
-                const option = document.createElement('option');
-                option.value = key;
-                option.text = key.replace('plan_', '');
-                select.appendChild(option);
-            }
+    function switchTab(id, el) {
+        const tabs = document.querySelectorAll('.tab-section');
+        const navs = document.querySelectorAll('.nav-item');
+        tabs.forEach(t => t.classList.remove('active'));
+        navs.forEach(n => n.classList.remove('active'));
+        const targetTab = document.getElementById(id);
+        if(targetTab) {
+            targetTab.classList.add('active');
+            el.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
-    }
-
-    function loadLocalPlan() {
-        const key = document.getElementById('local-plans').value;
-        if (!key) return;
-        const d = JSON.parse(localStorage.getItem(key));
-        document.getElementById('client-name').value = key.replace('plan_', '');
-        document.getElementById('rmb-budget').value = d.budget;
-        document.getElementById('current-age').value = d.age;
-        document.getElementById('enable-split').checked = d.split;
-        document.getElementById('split-ratio').value = d.ratio;
-        document.getElementById('strat-main').value = d.sm;
-        document.getElementById('strat-sub').value = d.ss;
-        document.getElementById('strategy-single').value = d.sg;
-        toggleSplit();
-    }
-
-    function exportData() { 
-        const d = { 
-            budget: document.getElementById('rmb-budget').value, 
-            age: document.getElementById('current-age').value, 
-            client: document.getElementById('client-name').value,
-            split: document.getElementById('enable-split').checked,
-            ratio: document.getElementById('split-ratio').value,
-            strat_main: document.getElementById('strat-main').value,
-            strat_sub: document.getElementById('strat-sub').value,
-            strat_single: document.getElementById('strategy-single').value
-        };
-        const blob = new Blob([JSON.stringify(d)], {type:"application/json"});
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `理财方案_${d.client || '客户'}.json`;
-        a.click();
     }
 
     function generateShareLink() {
-        // 使用官方标准 API 生成真实的图片二维码，保证 iOS/Android 100% 可以长按识别
-        const clientName = encodeURIComponent(document.getElementById('client-name').value || '贵宾');
-        const url = window.location.origin + window.location.pathname + '?mode=client&name=' + clientName + '&b=' + document.getElementById('rmb-budget').value + '&a=' + document.getElementById('current-age').value + '&s=' + document.getElementById('enable-split').checked + '&r=' + document.getElementById('split-ratio').value + '&sm=' + document.getElementById('strat-main').value + '&ss=' + document.getElementById('strat-sub').value + '&sg=' + document.getElementById('strategy-single').value;
+        const name = document.getElementById('client-name').value || "贵宾";
+        const currentUrl = new URL(window.location.href);
+        currentUrl.searchParams.set('mode', 'client');
+        currentUrl.searchParams.set('user', name);
         
-        const qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + encodeURIComponent(url);
-        
-        // 直接植入真实的 <img> 标签
-        document.getElementById('qrcode').innerHTML = `<img src="${qrUrl}" alt="专属方案二维码" style="width:200px; height:200px; display:block; margin:0 auto; -webkit-touch-callout: default;">`;
+        const qrContainer = document.getElementById('qrcode');
+        qrContainer.innerHTML = "正在生成..."; 
+
+        if (typeof QRCode === "undefined") {
+            alert("二维码插件尚未加载完成，请稍候再试");
+            return;
+        }
+
+        qrContainer.innerHTML = "";
+        const qr = new QRCode(qrContainer, {
+            text: currentUrl.toString(),
+            width: 220,
+            height: 220,
+            correctLevel: QRCode.CorrectLevel.H
+        });
+
+        setTimeout(() => {
+            const canvas = qrContainer.querySelector('canvas');
+            if (canvas) {
+                const img = document.createElement('img');
+                img.src = canvas.toDataURL("image/png");
+                img.style.maxWidth = "100%";
+                qrContainer.innerHTML = "";
+                qrContainer.appendChild(img);
+            }
+        }, 500);
+
         document.getElementById('qr-modal').style.display = 'flex';
     }
 
     function closeQR() { document.getElementById('qr-modal').style.display = 'none'; }
+
+    // 初始化檢測：如果是客戶模式，會隱藏工具列，但【修改4】移除了唯讀限制，讓客戶可以自由操作
+    function checkViewMode() {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('mode') === 'client') {
+            const clientName = params.get('user') || "贵宾";
+            document.getElementById('admin-tools').classList.add('hidden');
+            document.getElementById('main-nav').classList.add('hidden'); 
+            document.getElementById('client-msg').style.display = 'block';
+            document.getElementById('display-client-name').innerText = clientName;
+            
+            // 注意：這裡已經刪除了 input, select disabled 的代碼，讓客戶可以自行輸入
+        }
+        calculate();
+    }
+
+    function exportData() { 
+        const d = { budget: document.getElementById('rmb-budget').value, age: document.getElementById('current-age').value, client: document.getElementById('client-name').value };
+        const blob = new Blob([JSON.stringify(d)], {type: "application/json"});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); 
+        a.download = `方案_${d.client || '未命名'}.json`; a.click();
+    }
+
     function importData(e) {
-        const reader = new FileReader(); 
+        const reader = new FileReader();
         reader.onload = (ev) => { 
             const d = JSON.parse(ev.target.result); 
             document.getElementById('rmb-budget').value = d.budget; 
             document.getElementById('current-age').value = d.age; 
             document.getElementById('client-name').value = d.client || '';
-            document.getElementById('enable-split').checked = d.split;
-            toggleSplit();
+            calculate(); 
         }; 
         reader.readAsText(e.target.files[0]);
     }
 
-    function switchTab(id, el) {
-        document.querySelectorAll('.tab-section').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        document.getElementById(id).classList.add('active'); el.classList.add('active');
-        window.scrollTo(0,0);
-    }
-    
     function setCurr(c) {
-        curr = c; document.getElementById('btn-cny').style.background = c === 'CNY' ? 'var(--primary-color)' : 'transparent';
+        curr = c;
+        document.getElementById('btn-cny').style.background = c === 'CNY' ? 'var(--primary-color)' : 'transparent';
         document.getElementById('btn-cny').style.color = c === 'CNY' ? '#fff' : '#333';
         document.getElementById('btn-usd').style.background = c === 'USD' ? 'var(--primary-color)' : 'transparent';
         document.getElementById('btn-usd').style.color = c === 'USD' ? '#fff' : '#333';
         calculate();
     }
 
-    window.onload = function() {
-        updateLocalList();
-        const urlParams = new URLSearchParams(window.location.search);
-        if(urlParams.get('mode') === 'client') {
-            document.getElementById('main-nav').style.display = 'none';
-            document.getElementById('admin-actions').style.display = 'none';
-            document.getElementById('admin-header').style.display = 'none';
-            document.getElementById('client-welcome').style.display = 'block';
-            document.getElementById('client-welcome').innerText = `亲爱的 ${urlParams.get('name') || '贵宾'}，这是为您专属的理财方案`;
-            document.getElementById('rmb-budget').value = urlParams.get('b');
-            document.getElementById('current-age').value = urlParams.get('a');
-            document.getElementById('enable-split').checked = urlParams.get('s') === 'true';
-            document.getElementById('split-ratio').value = urlParams.get('r');
-            document.getElementById('strat-main').value = urlParams.get('sm');
-            document.getElementById('strat-sub').value = urlParams.get('ss');
-            document.getElementById('strategy-single').value = urlParams.get('sg');
-            document.querySelectorAll('input, select').forEach(el => el.disabled = true);
-            toggleSplit();
-        }
+    document.getElementById('rmb-budget').addEventListener('input', calculate);
+    document.getElementById('current-age').addEventListener('input', calculate);
+    document.getElementById('enable-split').addEventListener('change', (e) => {
+        document.getElementById('single-config').classList.toggle('hidden', e.target.checked);
+        document.getElementById('split-config').classList.toggle('hidden', !e.target.checked);
         calculate();
-    };
+    });
+
+    window.onload = checkViewMode;
 </script>
 </body>
 </html>
