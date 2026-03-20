@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>资产传承规划系统 Pro v1.3.0</title>
+    <title>资产传承规划系统 Pro v1.4.0</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
@@ -23,7 +23,6 @@
         .card-container { background: var(--card-bg-color); border-radius: 12px; border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); padding: 1.5rem; margin-bottom: 2rem; }
         header { text-align: center; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; margin-bottom: 1rem; }
         
-        /* 更新：標題與版本號同一行顯示 */
         header h1 { color: var(--primary-color); font-size: 1.6rem; margin: 0; display: flex; justify-content: center; align-items: center; gap: 8px; flex-wrap: wrap;}
         .version-badge { font-size: 0.8rem; background: var(--primary-color); color: #fff; padding: 2px 8px; border-radius: 12px; font-weight: normal; }
         
@@ -42,6 +41,17 @@
         th { background-color: #f8f9fa; padding: 12px; border: 1px solid #eee; position: sticky; top: 0; z-index: 10; }
         td { padding: 10px; border: 1px solid #eee; }
         
+        /* 更新：圖片自適應 iPad 及 手機，保證全視角不變形 */
+        .hero-img { 
+            width: 100%; 
+            max-height: 60vh; 
+            object-fit: contain; 
+            border-radius: 10px; 
+            margin-bottom: 1rem; 
+            border: 1px solid #eee; 
+            background-color: #fff;
+        }
+
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #fff; display: flex; box-shadow: 0 -2px 10px rgba(0,0,0,0.1); padding-bottom: env(safe-area-inset-bottom); z-index: 1000; }
         .nav-item { flex: 1; text-align: center; padding: 12px 0; color: #999; font-size: 0.75rem; cursor: pointer; display: flex; flex-direction: column; align-items: center;}
         .nav-text { color: #e74c3c !important; font-weight: 500; margin-top: 2px; }
@@ -70,7 +80,7 @@
 <div id="tab-calculator" class="tab-section active">
     <div class="card-container">
         <header>
-            <h1>资产传承规划系统 Pro <span class="version-badge">v1.3.0</span></h1>
+            <h1>资产传承规划系统 Pro <span class="version-badge">v1.4.0</span></h1>
         </header>
         
         <div id="client-msg" class="client-welcome">
@@ -78,11 +88,15 @@
         </div>
 
         <div class="action-bar" id="admin-tools">
-            <input type="text" id="client-name" style="flex:1; padding:8px; border-radius:6px; border:1px solid #ddd;" placeholder="客户姓名">
-            <button class="btn" style="background:#27ae60;" onclick="exportData()">保存</button>
-            <button class="btn" style="background:#f39c12;" onclick="document.getElementById('import-file').click()">汇入</button>
+            <input type="text" id="client-name" style="flex:1; min-width:120px; padding:8px; border-radius:6px; border:1px solid #ddd;" placeholder="客户姓名">
+            <select id="saved-clients-dropdown" style="padding:8px; border-radius:6px; border:1px solid #ddd;" onchange="loadSavedClient(this.value)">
+                <option value="">-- 读取已存客户 --</option>
+            </select>
+            <button class="btn" style="background:#27ae60;" onclick="saveClientLocal()">💾 保存</button>
+            <button class="btn" style="background:#8e44ad;" onclick="exportToCloud()">☁️ 云端汇出</button>
+            <button class="btn" style="background:#f39c12;" onclick="document.getElementById('import-file').click()">📂 汇入</button>
             <input type="file" id="import-file" class="hidden" onchange="importData(event)">
-            <button class="btn" style="background:#2980b9;" onclick="generateShareLink()">分享方案</button>
+            <button class="btn" style="background:#2980b9;" onclick="generateShareLink()">📤 分享方案</button>
         </div>
 
         <div class="currency-box">
@@ -174,12 +188,13 @@
         </div>
 
         <div id="update-log-section" class="update-log">
-            <strong><i class="fa-solid fa-code-branch"></i> Version 1.3.0 更新內容：</strong>
+            <strong><i class="fa-solid fa-code-branch"></i> Version 1.4.0 更新內容：</strong>
             <ul>
-                <li>更新：「保单分拆」及「纠纷风险」配图</li>
-                <li>排版：优化了隔离页面的展示顺序（跨境优先）</li>
-                <li>权限：客户专属页面已开放自由测算功能，移除唯读限制</li>
-                <li>优化：版本号直接显示于标题后方</li>
+                <li>功能：新增客戶資料本地保存，可透過下拉選單隨時讀取</li>
+                <li>功能：新增「云端汇出」，可將方案直接分享至 Google Drive 或 Dropbox</li>
+                <li>優化：所有展示圖片適配 iPad 及手機，保證全尺寸完整顯示</li>
+                <li>優化：未分拆前利益表格顏色更新（提取=藍色，現值=紫色）</li>
+                <li>優化：預算金額輸入框支援即時千分位（逗號）顯示</li>
             </ul>
         </div>
     </div>
@@ -248,7 +263,7 @@
 </nav>
 
 <script>
-    const APP_VERSION = "1.3.0";
+    const APP_VERSION = "1.4.0";
     let curr = 'CNY'; const liveRate = 0.138;
     const mults = {
         'none': { 8: 1.165, 9: 1.244, 10: 1.32, 15: 1.86, 20: 2.71, 30: 5.85, 40: 10.99, 60: 38.73, 75: 99.596, 100: 480.821 },
@@ -266,6 +281,17 @@
         for(let i=0; i<keys.length-1; i++) { if(yr >= keys[i] && yr <= keys[i+1]) { l=keys[i]; u=keys[i+1]; break; } }
         return m[l] + (yr - l) / (u - l) * (m[u] - m[l]);
     }
+
+    // 更新：預算輸入框即時千分位處理
+    document.getElementById('rmb-budget').addEventListener('input', function(e) {
+        let val = this.value.replace(/[^\d]/g, ''); // 移除所有非數字字符
+        if(val === '') {
+            this.value = '';
+        } else {
+            this.value = parseInt(val, 10).toLocaleString('en-US'); // 轉為千分位格式
+        }
+        calculate();
+    });
 
     function calculate() {
         const budget = parseFloat(document.getElementById('rmb-budget').value.replace(/,/g, '')) || 0;
@@ -290,7 +316,16 @@
                 else if(strat === 'withdraw13_from15') { d = total * 0.13; sY = 15; }
                 else if(strat === 'withdraw18_from20') { d = total * 0.18; sY = 20; }
                 let cumD = (yr >= sY) ? d * (yr - sY + 1) : 0;
-                body.innerHTML += `<tr><td>第${yr}年(${startAge+yr}岁)</td><td>${Math.round(total*factor).toLocaleString()}</td><td>${(yr>=sY)?Math.round(d*factor).toLocaleString():'-'}</td><td>${cumD > 0 ? Math.round(cumD*factor).toLocaleString() : '-'}</td><td>${Math.round(cv*factor).toLocaleString()}</td><td style="font-weight:bold;color:var(--gain-color)">${Math.round((cv + cumD)*factor).toLocaleString()}</td></tr>`;
+                
+                // 更新：加入顏色標示（累计提取為藍色，账户现值为紫色）
+                body.innerHTML += `<tr>
+                    <td>第${yr}年(${startAge+yr}岁)</td>
+                    <td>${Math.round(total*factor).toLocaleString()}</td>
+                    <td>${(yr>=sY)?Math.round(d*factor).toLocaleString():'-'}</td>
+                    <td style="color:#2980b9; font-weight:bold;">${cumD > 0 ? Math.round(cumD*factor).toLocaleString() : '-'}</td>
+                    <td style="color:#8e44ad; font-weight:bold;">${Math.round(cv*factor).toLocaleString()}</td>
+                    <td style="font-weight:bold;color:var(--gain-color)">${Math.round((cv + cumD)*factor).toLocaleString()}</td>
+                </tr>`;
             }
         } else {
             document.getElementById('h1').innerHTML = `<th rowspan="2">保单年度(年龄)</th><th rowspan="2">累计保费</th><th colspan="3">主保单 (${Math.round(ratio*100)}%)</th><th colspan="3">副保单 (${Math.round((1-ratio)*100)}%)</th><th rowspan="2">合计利益</th>`;
@@ -327,6 +362,98 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     }
+
+    // --- 新增：保存與讀取客戶資料邏輯 ---
+    function saveClientLocal() {
+        const clientName = document.getElementById('client-name').value.trim();
+        if (!clientName) { alert("请先输入客户姓名！"); return; }
+        
+        const data = {
+            budget: document.getElementById('rmb-budget').value,
+            age: document.getElementById('current-age').value,
+            split: document.getElementById('enable-split').checked,
+            strategySingle: document.getElementById('strategy-single').value,
+            ratio: document.getElementById('split-ratio').value,
+            stratMain: document.getElementById('strat-main').value,
+            stratSub: document.getElementById('strat-sub').value
+        };
+        
+        let savedClients = JSON.parse(localStorage.getItem('savedClients') || '{}');
+        savedClients[clientName] = data;
+        localStorage.setItem('savedClients', JSON.stringify(savedClients));
+        
+        updateClientDropdown();
+        alert(`客户 "${clientName}" 的资料已成功保存！`);
+    }
+
+    function updateClientDropdown() {
+        const dropdown = document.getElementById('saved-clients-dropdown');
+        let savedClients = JSON.parse(localStorage.getItem('savedClients') || '{}');
+        
+        // 保留第一個默認選項
+        dropdown.innerHTML = '<option value="">-- 读取已存客户 --</option>';
+        for (let name in savedClients) {
+            dropdown.innerHTML += `<option value="${name}">${name}</option>`;
+        }
+    }
+
+    function loadSavedClient(clientName) {
+        if (!clientName) return;
+        let savedClients = JSON.parse(localStorage.getItem('savedClients') || '{}');
+        const d = savedClients[clientName];
+        if (d) {
+            document.getElementById('client-name').value = clientName;
+            document.getElementById('rmb-budget').value = d.budget;
+            document.getElementById('current-age').value = d.age;
+            
+            document.getElementById('enable-split').checked = d.split || false;
+            document.getElementById('enable-split').dispatchEvent(new Event('change'));
+            
+            if (d.strategySingle) document.getElementById('strategy-single').value = d.strategySingle;
+            if (d.ratio) document.getElementById('split-ratio').value = d.ratio;
+            if (d.stratMain) document.getElementById('strat-main').value = d.stratMain;
+            if (d.stratSub) document.getElementById('strat-sub').value = d.stratSub;
+            
+            calculate();
+        }
+    }
+
+    // --- 新增：雲端匯出邏輯 (Drive/Dropbox) ---
+    function exportToCloud() {
+        const clientName = document.getElementById('client-name').value || "未命名";
+        const d = { 
+            budget: document.getElementById('rmb-budget').value, 
+            age: document.getElementById('current-age').value, 
+            client: clientName,
+            split: document.getElementById('enable-split').checked
+        };
+        const blob = new Blob([JSON.stringify(d, null, 2)], {type: "application/json"});
+        const file = new File([blob], `理财方案_${clientName}.json`, {type: "application/json"});
+
+        // 檢查設備是否支援原生分享 (手機/平板通常支援直接分享到 Drive/Dropbox)
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            navigator.share({
+                files: [file],
+                title: `资产传承方案 - ${clientName}`,
+                text: '这是为您生成的专属理财方案数据，可上传至 Google Drive 或 Dropbox 进行备份。'
+            }).catch(console.error);
+        } else {
+            // 如果是在不支援的電腦瀏覽器，退回普通下載，並提示手動上傳
+            const a = document.createElement('a'); a.href = URL.createObjectURL(blob); 
+            a.download = file.name; a.click();
+            alert("由于您的浏览器不支持直接唤起云端分享，文件已自动下载。\n请手动将文件上传至您的 Google Drive 或 Dropbox。");
+        }
+    }
+
+    function exportData() { 
+        saveClientLocal(); // 點擊下載時也順便保存到本地
+        const clientName = document.getElementById('client-name').value || "未命名";
+        const d = { budget: document.getElementById('rmb-budget').value, age: document.getElementById('current-age').value, client: clientName };
+        const blob = new Blob([JSON.stringify(d)], {type: "application/json"});
+        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); 
+        a.download = `方案_${clientName}.json`; a.click();
+    }
+    // ----------------------------------------
 
     function generateShareLink() {
         const name = document.getElementById('client-name').value || "贵宾";
@@ -376,14 +503,8 @@
             document.getElementById('client-msg').style.display = 'block';
             document.getElementById('display-client-name').innerText = clientName;
         }
+        updateClientDropdown(); // 初始化載入已存客戶列表
         calculate();
-    }
-
-    function exportData() { 
-        const d = { budget: document.getElementById('rmb-budget').value, age: document.getElementById('current-age').value, client: document.getElementById('client-name').value };
-        const blob = new Blob([JSON.stringify(d)], {type: "application/json"});
-        const a = document.createElement('a'); a.href = URL.createObjectURL(blob); 
-        a.download = `方案_${d.client || '未命名'}.json`; a.click();
     }
 
     function importData(e) {
@@ -393,6 +514,9 @@
             document.getElementById('rmb-budget').value = d.budget; 
             document.getElementById('current-age').value = d.age; 
             document.getElementById('client-name').value = d.client || '';
+            
+            // 觸發千分位格式化
+            document.getElementById('rmb-budget').dispatchEvent(new Event('input'));
             calculate(); 
         }; 
         reader.readAsText(e.target.files[0]);
@@ -407,7 +531,6 @@
         calculate();
     }
 
-    document.getElementById('rmb-budget').addEventListener('input', calculate);
     document.getElementById('current-age').addEventListener('input', calculate);
     document.getElementById('enable-split').addEventListener('change', (e) => {
         document.getElementById('single-config').classList.toggle('hidden', e.target.checked);
